@@ -8,6 +8,8 @@ However, something that we would like to incoporate is Public Key Cryptography. 
 For an overview of this project as well as getting started instructions, check out the following video:
 
 https://www.loom.com/share/0d3c74890b8e44a5918c4cacb3f646c4
+
+## Setup Instructions
  
 ### Client
 
@@ -29,3 +31,14 @@ The server folder contains a node.js server using [express](https://expressjs.co
 _Hint_ - > Run `npm i nodemon` and then run `nodemon index` instead of `node index` to automatically restart the server on any changes!
 
 The application should connect to the default server port (3042) automatically!
+
+## 🏁 Your Goal: ECDSA
+
+Only read this section **AFTER** you've set followed the **Setup Instructions** above!
+
+This project begins with a client that is allowed to transfer any funds from any account to another account. That's not very secure. By applying digital signatures we can require that only the user with the appropriate private key can create a signature that will allow them to move funds from one account to the other. Then, the server can verify the signature to move funds from one account to another.
+
+Incorporate public key cryptography so transfers can only be completed with a valid signature
+The person sending the transaction should have to verify that they own the private key corresponding to the address that is sending funds
+
+> 🤔 While you're working through this project consider the security implications of your implementation decisions. What if someone intercepted a valid signature, would they be able to replay that transfer by sending it back to the server?
