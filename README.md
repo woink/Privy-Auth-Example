@@ -34,7 +34,7 @@ The application should connect to the default server port (3042) automatically!
 
 ## 🏁 Your Goal: ECDSA
 
-Only read this section **AFTER** you've set followed the **Setup Instructions** above!
+Only read this section **AFTER** you've followed the **Setup Instructions** above!
 
 This project begins with a client that is allowed to transfer any funds from any account to another account. That's not very secure. By applying digital signatures we can require that only the user with the appropriate private key can create a signature that will allow them to move funds from one account to the other. Then, the server can verify the signature to move funds from one account to another.
 
