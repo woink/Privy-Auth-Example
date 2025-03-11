@@ -117,7 +117,7 @@ Hint: In `index.js`, you will want to:
 
 To pass **Phase 3**:
 
-Your app is able to validate and move funds using digital signatures.
+- Your app is able to validate and move funds using digital signatures.
 
 > Hint: https://github.com/paulmillr/noble-secp256k1 is a great library to leverage for this final phase!
 
