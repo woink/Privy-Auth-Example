@@ -1,5 +1,5 @@
-import Wallet from "./Wallet";
 import Transfer from "./Transfer";
+import Wallet from "./Wallet";
 import "./App.scss";
 import { useState } from "react";
 
