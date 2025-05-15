@@ -1,0 +1,112 @@
+body {
+  font-family: "Muli", sans-serif;
+  font-weight: 300;
+  background-color: #e2e8f0;
+  padding: 40px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.button {
+  background-color: #10b981;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 1rem;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #059669;
+  }
+}
+
+.wallet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  margin: 20px;
+  width: 380px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .balance {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 20px;
+  }
+}
+
+.transfer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  margin: 20px;
+  width: 380px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin: 10px;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 15px 0;
+  width: 100%;
+
+  input {
+    padding: 10px 5px;
+    font-size: 1rem;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100%;
+  }
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  font-weight: 500;
+  text-align: center;
+}
