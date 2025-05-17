@@ -1,3 +1,5 @@
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - bufferutil
   - unrs-resolver
+  - utf-8-validate
