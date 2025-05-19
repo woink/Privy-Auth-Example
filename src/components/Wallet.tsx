@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { getBalance } from '@/lib/api';
+import { useState } from "react";
+import { getBalance } from "@/lib/api";
 
 interface WalletProps {
   address: string;
@@ -8,7 +8,12 @@ interface WalletProps {
   setBalance: (balance: number) => void;
 }
 
-export default function Wallet({ address, setAddress, balance, setBalance }: WalletProps) {
+export default function Wallet({
+  address,
+  setAddress,
+  balance,
+  setBalance,
+}: WalletProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,13 +24,13 @@ export default function Wallet({ address, setAddress, balance, setBalance }: Wal
     if (newAddress) {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const newBalance = await getBalance(newAddress);
         setBalance(newBalance);
       } catch (err) {
-        console.error('Error fetching balance:', err);
-        setError('Failed to fetch balance');
+        console.error("Error fetching balance:", err);
+        setError("Failed to fetch balance");
         setBalance(0);
       } finally {
         setIsLoading(false);

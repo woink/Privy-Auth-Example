@@ -1,19 +1,6 @@
-import { usePrivy } from '@privy-io/react-auth';
-
-interface WalletDisplay {
-  address: string;
-  truncated?: boolean;
-}
-
-const WalletAddress = ({ address, truncated = true }: WalletDisplay) => {
-  if (!address) return null;
-  if (!truncated) return <span>{address}</span>;
-  return (
-    <span>
-      {address.slice(0, 6)}...{address.slice(-4)}
-    </span>
-  );
-};
+import { usePrivy } from "@privy-io/react-auth";
+import WalletAddress from "./WalletAddress";
+import { getAddress } from "viem";
 
 export default function AuthStatus() {
   const { ready, authenticated, login, logout, user } = usePrivy();
@@ -24,7 +11,7 @@ export default function AuthStatus() {
 
   if (!authenticated) {
     return (
-      <button 
+      <button
         onClick={login}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
@@ -33,7 +20,8 @@ export default function AuthStatus() {
     );
   }
 
-  const walletAddress = user?.wallet?.address;
+  const walletAddress =
+    user?.wallet?.address && getAddress(user.wallet.address);
 
   return (
     <div className="flex flex-col items-start gap-4">
@@ -45,7 +33,7 @@ export default function AuthStatus() {
           <span className="text-gray-500">No wallet connected</span>
         )}
       </div>
-      <button 
+      <button
         onClick={logout}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
       >
