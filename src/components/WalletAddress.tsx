@@ -1,6 +1,6 @@
-import { publicClient } from "@/lib/privy";
-import { useEffect, useState } from "react";
-import type { Address, GetEnsNameReturnType } from "viem";
+import { publicMainnetClient } from '@/lib/privy';
+import { useEffect, useState } from 'react';
+import type { Address, GetEnsNameReturnType } from 'viem';
 
 interface WalletDisplay {
   address: Address;
@@ -15,15 +15,12 @@ export default function WalletAddress({
   if (!truncated) return <span>{address}</span>;
 
   const [ens, setEns] = useState<GetEnsNameReturnType>(null);
-  const ensName = async () => await publicClient.getEnsName({ address });
+  const ensName = async () => await publicMainnetClient.getEnsName({ address });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     ensName().then(setEns);
   }, [address]);
 
-  return (
-    <span>
-      {ens || `${address.slice(0, 6)}...${address.slice(-4)}`}
-    </span>
-  );
+  return <span>{ens || `${address.slice(0, 6)}...${address.slice(-4)}`}</span>;
 }

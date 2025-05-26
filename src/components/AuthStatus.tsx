@@ -1,6 +1,6 @@
-import { usePrivy } from "@privy-io/react-auth";
-import WalletAddress from "./WalletAddress";
-import { getAddress } from "viem";
+import { usePrivy } from '@privy-io/react-auth';
+import { getAddress } from 'viem';
+import WalletAddress from './WalletAddress';
 
 export default function AuthStatus() {
   const { ready, authenticated, login, logout, user } = usePrivy();
@@ -12,6 +12,7 @@ export default function AuthStatus() {
   if (!authenticated) {
     return (
       <button
+        type="button"
         onClick={login}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
       >
@@ -34,6 +35,7 @@ export default function AuthStatus() {
         )}
       </div>
       <button
+        type="button"
         onClick={logout}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
       >
