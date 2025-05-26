@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { sendTransaction } from '@/lib/api';
+import { useState } from 'react';
 
 interface TransferProps {
   address: string;
@@ -12,10 +12,12 @@ export default function Transfer({ address, setBalance }: TransferProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const setValue = (setter: React.Dispatch<React.SetStateAction<string>>) => 
-    (evt: React.ChangeEvent<HTMLInputElement>) => setter(evt.target.value);
+  const setValue =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (evt: React.ChangeEvent<HTMLInputElement>) =>
+      setter(evt.target.value);
 
-  async function transfer(evt: React.FormEvent) {
+  const transfer = async (evt: React.FormEvent) => {
     evt.preventDefault();
 
     if (!address) {
@@ -28,7 +30,11 @@ export default function Transfer({ address, setBalance }: TransferProps) {
       return;
     }
 
-    if (!sendAmount || isNaN(Number(sendAmount)) || Number(sendAmount) <= 0) {
+    if (
+      !sendAmount ||
+      Number.isNaN(Number(sendAmount)) ||
+      Number(sendAmount) <= 0
+    ) {
       setError('Please enter a valid amount to send');
       return;
     }
@@ -42,20 +48,20 @@ export default function Transfer({ address, setBalance }: TransferProps) {
         amount: Number(sendAmount),
         recipient,
       });
-      
+
       setBalance(balance);
       setSendAmount('');
       setRecipient('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Transaction error:', error);
       setError(
-        error?.response?.data?.message || 
-        'Transaction failed. Please try again.'
+        error?.response?.data?.message ||
+          'Transaction failed. Please try again.',
       );
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <form className="container transfer" onSubmit={transfer}>
@@ -85,10 +91,10 @@ export default function Transfer({ address, setBalance }: TransferProps) {
 
       {error && <div className="error">{error}</div>}
 
-      <input 
-        type="submit" 
-        className="button" 
-        value={isLoading ? "Processing..." : "Transfer"} 
+      <input
+        type="submit"
+        className="button"
+        value={isLoading ? 'Processing...' : 'Transfer'}
         disabled={isLoading}
       />
     </form>

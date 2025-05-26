@@ -4,10 +4,10 @@ import AuthStatus from '@/components/AuthStatus';
 import Transfer from '@/components/Transfer';
 import Wallet from '@/components/Wallet';
 import { publicSepoliaClient } from '@/lib/privy';
+import { truncateBalance } from '@/utils/balance';
 import { usePrivy } from '@privy-io/react-auth';
 import { useEffect, useState } from 'react';
 import { formatEther } from 'viem';
-import { truncateBalance } from '@/utils/balance';
 
 export default function Home() {
   const [address, setAddress] = useState<privyUser['wallet']['address']>(null);

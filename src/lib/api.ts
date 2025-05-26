@@ -31,7 +31,7 @@ export interface SendTransactionResponse {
 }
 
 export const sendTransaction = async (
-  params: SendTransactionParams
+  params: SendTransactionParams,
 ): Promise<SendTransactionResponse> => {
   try {
     const response = await api.post<SendTransactionResponse>('/send', params);

@@ -1,14 +1,14 @@
-import "./globals.scss";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import PrivyProviderWrapper from "./privy-provider"; // Import the wrapper
+import './globals.scss';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import PrivyProviderWrapper from './privy-provider'; // Import the wrapper
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "ECDSA Node - Privy Enabled", // Updated title
+  title: 'ECDSA Node - Privy Enabled', // Updated title
   description:
-    "A simple wallet application using Next.js and Privy for authentication", // Updated description
+    'A simple wallet application using Next.js and Privy for authentication', // Updated description
 };
 
 export default function RootLayout({
