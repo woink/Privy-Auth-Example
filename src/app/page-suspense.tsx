@@ -1,14 +1,13 @@
 "use client";
 
 import AuthStatus from "@/components/AuthStatus";
-// import Transfer from "@/components/Transfer";
 import UserWalletSuspense from "@/components/UserWalletSuspense";
 import WalletErrorBoundary from "@/components/WalletErrorBoundary";
 import WalletLoading from "@/components/WalletLoading";
 import { usePrivy } from "@privy-io/react-auth";
 import { Suspense } from "react";
 
-export default function Home() {
+export default function HomePage() {
   const { user } = usePrivy();
 
   return (
@@ -24,7 +23,6 @@ export default function Home() {
             </Suspense>
           </WalletErrorBoundary>
         )}
-        {/* <Transfer setBalance={setBalance} address={user.address} /> */}
       </main>
     </>
   );

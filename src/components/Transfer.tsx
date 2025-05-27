@@ -1,4 +1,3 @@
-import { sendTransaction } from "@/lib/api";
 import { useState } from "react";
 
 interface TransferProps {
@@ -42,25 +41,25 @@ export default function Transfer({ address, setBalance }: TransferProps) {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const { balance } = await sendTransaction({
-        sender: address,
-        amount: Number(sendAmount),
-        recipient,
-      });
+    //   try {
+    //     const { balance } = await sendTransaction({
+    //       sender: address,
+    //       amount: Number(sendAmount),
+    //       recipient,
+    //     });
 
-      setBalance(balance);
-      setSendAmount("");
-      setRecipient("");
-    } catch (error: unknown) {
-      console.error("Transaction error:", error);
-      setError(
-        error?.response?.data?.message ||
-          "Transaction failed. Please try again.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    //     setBalance(balance);
+    //     setSendAmount("");
+    //     setRecipient("");
+    //   } catch (error: unknown) {
+    //     console.error("Transaction error:", error);
+    //     setError(
+    //       error?.response?.data?.message ||
+    //         "Transaction failed. Please try again.",
+    //     );
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
   };
 
   return (
