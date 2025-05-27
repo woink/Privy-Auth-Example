@@ -1,0 +1,7 @@
+{
+  "language_servers": ["biome", "typescript-language-server"],
+  "code_actions_on_format": {
+    "source.fixAll.biome": true,
+    "source.organizeImports.biome": true
+  }
+}
