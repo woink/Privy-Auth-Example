@@ -1,126 +1,132 @@
-## Project 1: Build a Web App using ECDSA
+# ECDSA Node Project
 
-This project is an example of using a client and server to facilitate transfers between different addresses. Since there is just a single server on the back-end handling transfers, this is clearly very centralized. We won't worry about distributed consensus for this project.
+This project demonstrates using a client and server to facilitate transfers between different addresses using public key cryptography.
 
-However, something that we would like to incorporate is Public Key Cryptography. By using Elliptic Curve Digital Signatures we can make it so the server only allows transfers that have been signed for by the person who owns the associated address.
+The repository contains two implementations:
+1. **Original Implementation**: Separate client (React/Vite) and server (Express)
+2. **Next.js Implementation**: Combined full-stack Next.js TypeScript application
 
-## Video Instructions
-For an overview of this project as well as getting started instructions, check out the following video:
+## Project Overview
 
-https://www.youtube.com/watch?v=GU5vlKaNvmI
+This project shows how to implement secure transfers between addresses using Elliptic Curve Digital Signatures. By using ECDSA, the server only allows transfers that have been signed by the person who owns the associated address.
 
-If you are interested in a text-based guide, please read on below. ⬇️
+## Original Implementation Setup
 
-## Setup Instructions
- 
 ### Client
 
-The client folder contains a [react app](https://reactjs.org/) using [vite](https://vitejs.dev/). To get started, follow these steps:
+The client folder contains a React app using Vite. To get started:
 
 1. Open up a terminal in the `/client` folder
 2. Run `npm install` to install all the dependencies
 3. Run `npm run dev` to start the application 
-4. Now you should be able to visit the app at http://localhost:5173/
+4. Visit the app at http://localhost:5173/
 
 ### Server
 
-The server folder contains a Node.js server using [express](https://expressjs.com/). To run the server, follow these steps:
+The server folder contains a Node.js server using Express. To run the server:
 
 1. Open a terminal within the `/server` folder 
 2. Run `npm install` to install all the dependencies 
 3. Run `node index` to start the server
 
-_Hint_ - > Run `npm i -g nodemon` and then run `nodemon index` instead of `node index` to automatically restart the server on any changes!
+**Tip**: Run `npm i -g nodemon` and then use `nodemon index` to automatically restart the server on changes.
 
-The application should connect to the default server port (3042) automatically!
+The application connects to the default server port (3042) automatically.
 
-## 🏁 Your Goal: Set Up a Secure ECDSA-based Web Application
+## Next.js Implementation Setup
 
-Only read this section **AFTER** you've followed the **Setup Instructions** above!
+The Next.js implementation combines both frontend and backend into a single TypeScript application.
 
-This project begins with a client that is allowed to transfer any funds from any account to another account. That's not very secure. By applying digital signatures we can require that only the user with the appropriate private key can create a signature that will allow them to move funds from one account to the other. Then, the server can verify the signature to move funds from one account to another.
+### Prerequisites
 
-Your project is considered **done** when you have built the following features in a secure way (NOTE: your project is not final if it still uses private keys anywhere on the client side!):
-- Incorporate public key cryptography so transfers can only be completed with a valid signature
-- The person sending the transaction should have to verify that they own the private key corresponding to the address that is sending funds
+- Node.js 16.x or later
+- npm, yarn, or pnpm
 
-> 🤔 While you're working through this project consider the security implications of your implementation decisions. What if someone intercepted a valid signature, would they be able to replay that transfer by sending it back to the server?
+### Installation
 
-## Recommended Approach To Building This Project
+1. Navigate to the Next.js app directory:
+   ```
+   cd ecdsa-node-next
+   ```
 
-There are many ways to approach this project. The goal is to create a client-server webapp that safely validates transaction intents, using public key cryptography, between accounts. Below is a phased approach that clearly details out a roadmap to solving this goal:
+2. Install dependencies:
+   ```
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
 
-### **Phase 1**
-- You have successfully git cloned this project onto your local machine
-- You installed all dependencies by running `npm i` both in the `/client` and in the `/server` folders
-- You have a website running on http://localhost:5173/ by running `npm run dev` in the `/client` folder
-- You have a server process running by running `nodemon index` in the `/server` folder (remember to run `npm i -g nodemon` prior to this)
-- A balance displays on the `Wallet Address` input box when you type in "0x1", "0x2" and "0x3"
-- When you type in "0x1" (or any of the other accounts listed in the `server/index.js` file, you can also send an amount to any other account (using the right-hand column); this action withdraws whatever amount you send from the first account too. You should see these changes in real time, especially if you are using `nodemon` to run your server process
-- Even if you reload the page on http://localhost:5173/, the balance changes you've previously made still remain - this is because it is your server actually keeping track of balances, not your client (ie. your front-end)
+3. Run the development server:
+   ```
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
 
-If all of these are complete, move on to **Phase 2**! ⬇️
+4. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-### **Phase 2**
+## Next.js Project Structure
 
-At this point, our app security is not very good. If we deploy this app now, anyone can access any balance and make changes. This means that Alice (or really.. anyone!) can type in "0x2" and transfer an amount, even if that account is not actually her account! We need to find a way to assign ownership of accounts. 
+- `/src/app` - Next.js app router pages and API routes
+- `/src/components` - React components for the UI
+- `/src/db` - Database handling for wallet balances and transactions
+- `/src/lib` - Utility functions and API client
 
-Let's incorporate some of the cryptography we've learned in the previous lessons to build a half-baked solution; we will use [Ethereum Cryptography library](https://www.npmjs.com/package/ethereum-cryptography/v/1.2.0).
+## API Endpoints (Next.js Version)
 
-> Please use v1.2.0 of the Ethereum Cryptography library!
+- `GET /api/balance/[address]` - Get balance for a specific address
+- `POST /api/send` - Send transaction between addresses
 
-Start a new terminal tab and run `npm i ethereum-cryptography@1.2.0` - this will pull down functions to cryptographically sign and verify data.
+## Implementation Goals
 
-> Remember, you must run `npm i ethereum-cryptography@1.2.0` in BOTH the `/client` and the `/server` folder!
+Your project goal is to set up a secure ECDSA-based web application:
 
-In **Phase 2**, your job is to implement private keys so that when a user interacts with your application, the ONLY way they are allowed to move funds is if they provide the **private key** of the account they want to move funds from.
+1. Incorporate public key cryptography so transfers can only be completed with a valid signature
+2. The person sending the transaction should verify they own the private key corresponding to the sending address
 
-The key change is to change the `balances` object in the `/server/index.js` file to use **real public keys**.
+## Recommended Approach
 
-You can do this programmatically (by editting the `/server/index.js` file) or using a script with the following functions:
+### Phase 1: Basic Setup
+- Clone the project and install dependencies
+- Run the client and server
+- Verify basic functionality (viewing balances, sending funds)
 
-```js
-const secp = require("ethereum-cryptography/secp256k1");
-const { toHex } = require("ethereum-cryptography/utils");
+### Phase 2: Private Key Implementation
+- Install ethereum-cryptography: `npm i ethereum-cryptography@1.2.0` in both client and server
+- Replace placeholder addresses with actual public keys
+- Generate key pairs using secp256k1
+- Update server to use real public keys for balances
 
-const privateKey = secp.utils.randomPrivateKey();
+### Phase 3: Secure Implementation
+- Implement transaction signing on the client-side
+- Add signature verification on the server-side
+- Recover the public address from signatures
+- Validate transactions against the server's record
 
-console.log('private key: ', toHex(privateKey));
+## Next.js Improvements
 
-const publicKey = secp.getPublicKey(privateKey);
+The Next.js TypeScript implementation offers several advantages:
 
-console.log('public key', toHex(publicKey));
-```
+1. **Integrated Architecture**: Frontend and backend in one codebase
+2. **TypeScript Support**: Enhanced type safety and developer experience
+3. **Modern Structure**: Cleaner organization with Next.js App Router
+4. **Improved UX**: Better error handling and loading states
 
-The script above will create a brand new random private key, and then get its equivalent public key, each time you run it.
+## Security Considerations
 
-Now you have the foundation to implement public key cryptography into your project!
-
-To pass **Phase 2**:
-
-- You have replaced "0x1", "0x2" and "0x3" in the `server/index.js` file with actual public keys generated by using the [Ethereum Cryptography library](https://www.npmjs.com/package/ethereum-cryptography/v/1.2.0). These public keys, in this suggested flow, were generated from a randomly generated private key assigned to the user. The method used to generate the public key was: `secp.getPublicKey(privateKey)`.
-
-> Extra credit: Make your accounts look like Ethereum addresses! (ie. instead of the long public key hexadecimal format, use the "0x" + 20 hex characters format of Ethereum - this is a fun challenge to get right!)
-
-- You are able to transfer funds between the addresses, via public keys/addresses of your server's users, that have been generated by inputting a private key into the webapp.
- 
-### **Phase 3**
-
-Asking users to input a private key directly into your webapp is a big no-no! 🚫
-
-The next step for YOU to accomplish is to make it so that you can send a signed transaction to the server, via your webapp; the server should the authenticate that transaction by deriving the public key associated with it. If that public key has funds, move the funds to the intended recipient. All of this should be accomplished via digital signatures alone.
-
-Hint: In `index.js`, you will want to:
-- get a signature from the client-side application
-- recover the public address from the signature itself
-- validate the recovered address against your server's `balances` object
-
-To pass **Phase 3**:
-
-- Your app is able to validate and move funds using digital signatures.
-
-> Hint: https://github.com/paulmillr/noble-secp256k1 is a great library to leverage for this final phase!
+While working through this project, consider:
+- What happens if someone intercepts a valid signature?
+- Could they replay that transfer by sending it back to the server?
+- How to prevent signature reuse?
 
 ## Sample Solution
 
-Want to peek at a solution while you craft your own? Check [this repo](https://github.com/AlvaroLuken/exchange-secp256k1) out.
+For a reference implementation of the original version, check [this repo](https://github.com/AlvaroLuken/exchange-secp256k1).
+
+## License
+
+[MIT](LICENSE)
