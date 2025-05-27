@@ -1,6 +1,6 @@
-import { publicMainnetClient } from '@/lib/privy';
-import { useEffect, useState } from 'react';
-import type { Address, GetEnsNameReturnType } from 'viem';
+import { publicMainnetClient } from "@/lib/privy";
+import { useEffect, useState } from "react";
+import type { Address, GetEnsNameReturnType } from "viem";
 
 interface WalletDisplay {
   address: Address;

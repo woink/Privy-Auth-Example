@@ -1,6 +1,6 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { getAddress } from 'viem';
-import WalletAddress from './WalletAddress';
+import { usePrivy } from "@privy-io/react-auth";
+import { getAddress } from "viem";
+import WalletAddress from "./WalletAddress";
 
 export default function AuthStatus() {
   const { ready, authenticated, login, logout, user } = usePrivy();

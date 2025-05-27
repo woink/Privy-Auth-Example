@@ -1,5 +1,5 @@
-import { sendTransaction } from '@/lib/api';
-import { useState } from 'react';
+import { sendTransaction } from "@/lib/api";
+import { useState } from "react";
 
 interface TransferProps {
   address: string;
@@ -7,8 +7,8 @@ interface TransferProps {
 }
 
 export default function Transfer({ address, setBalance }: TransferProps) {
-  const [sendAmount, setSendAmount] = useState<string>('');
-  const [recipient, setRecipient] = useState<string>('');
+  const [sendAmount, setSendAmount] = useState<string>("");
+  const [recipient, setRecipient] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,12 +21,12 @@ export default function Transfer({ address, setBalance }: TransferProps) {
     evt.preventDefault();
 
     if (!address) {
-      setError('You need to specify your wallet address first');
+      setError("You need to specify your wallet address first");
       return;
     }
 
     if (!recipient) {
-      setError('Recipient address is required');
+      setError("Recipient address is required");
       return;
     }
 
@@ -35,7 +35,7 @@ export default function Transfer({ address, setBalance }: TransferProps) {
       Number.isNaN(Number(sendAmount)) ||
       Number(sendAmount) <= 0
     ) {
-      setError('Please enter a valid amount to send');
+      setError("Please enter a valid amount to send");
       return;
     }
 
@@ -50,13 +50,13 @@ export default function Transfer({ address, setBalance }: TransferProps) {
       });
 
       setBalance(balance);
-      setSendAmount('');
-      setRecipient('');
+      setSendAmount("");
+      setRecipient("");
     } catch (error: unknown) {
-      console.error('Transaction error:', error);
+      console.error("Transaction error:", error);
       setError(
         error?.response?.data?.message ||
-          'Transaction failed. Please try again.',
+          "Transaction failed. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -94,7 +94,7 @@ export default function Transfer({ address, setBalance }: TransferProps) {
       <input
         type="submit"
         className="button"
-        value={isLoading ? 'Processing...' : 'Transfer'}
+        value={isLoading ? "Processing..." : "Transfer"}
         disabled={isLoading}
       />
     </form>

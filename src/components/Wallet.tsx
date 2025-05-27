@@ -1,5 +1,5 @@
-import { getBalance } from '@/lib/api';
-import { useState } from 'react';
+import { getBalance } from "@/lib/api";
+import { useState } from "react";
 
 interface WalletProps {
   address: string;

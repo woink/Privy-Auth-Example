@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import AuthStatus from '@/components/AuthStatus';
-import Transfer from '@/components/Transfer';
-import Wallet from '@/components/Wallet';
-import { publicSepoliaClient } from '@/lib/privy';
-import { truncateBalance } from '@/utils/balance';
-import { usePrivy } from '@privy-io/react-auth';
-import { useEffect, useState } from 'react';
-import { formatEther } from 'viem';
+import AuthStatus from "@/components/AuthStatus";
+import Transfer from "@/components/Transfer";
+import Wallet from "@/components/Wallet";
+import { publicSepoliaClient } from "@/lib/privy";
+import { truncateBalance } from "@/utils/balance";
+import { usePrivy } from "@privy-io/react-auth";
+import { useEffect, useState } from "react";
+import { formatEther } from "viem";
 
 export default function Home() {
-  const [address, setAddress] = useState<privyUser['wallet']['address']>(null);
+  const [address, setAddress] = useState<PrivyUser["wallet"]["address"]>(null);
   const [balance, setBalance] = useState<bigint | null>(null);
 
   const { user } = usePrivy();

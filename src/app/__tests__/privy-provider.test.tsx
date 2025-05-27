@@ -1,4 +1,4 @@
-import { cleanup, render } from '@testing-library/react';
+import { cleanup, render } from "@testing-library/react";
 import {
   type MockedFunction,
   beforeEach,
@@ -6,10 +6,10 @@ import {
   expect,
   it,
   vi,
-} from 'vitest';
-import PrivyProviderWrapper from '../privy-provider';
+} from "vitest";
+import PrivyProviderWrapper from "../privy-provider";
 
-vi.mock('@privy-io/react-auth', () => ({
+vi.mock("@privy-io/react-auth", () => ({
   PrivyProvider: ({
     children,
     appId,
@@ -20,7 +20,7 @@ vi.mock('@privy-io/react-auth', () => ({
   ),
 }));
 
-describe('PrivyProviderWrapper', () => {
+describe("PrivyProviderWrapper", () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -29,19 +29,19 @@ describe('PrivyProviderWrapper', () => {
     process.env = { ...originalEnv };
   });
 
-  it('renders children components', () => {
-    process.env.NEXT_PUBLIC_PRIVY_APP_ID = 'test-app-id';
+  it("renders children components", () => {
+    process.env.NEXT_PUBLIC_PRIVY_APP_ID = "test-app-id";
     const { getByTestId } = render(
       <PrivyProviderWrapper>
         <div data-testid="test-child">Test Child</div>
       </PrivyProviderWrapper>,
     );
 
-    expect(getByTestId('test-child')).toBeInTheDocument();
+    expect(getByTestId("test-child")).toBeInTheDocument();
   });
 
-  it('initializes PrivyProvider with correct app ID', () => {
-    const testAppId = 'test-app-id';
+  it("initializes PrivyProvider with correct app ID", () => {
+    const testAppId = "test-app-id";
     process.env.NEXT_PUBLIC_PRIVY_APP_ID = testAppId;
 
     const { getByTestId } = render(
@@ -50,15 +50,15 @@ describe('PrivyProviderWrapper', () => {
       </PrivyProviderWrapper>,
     );
 
-    expect(getByTestId('mock-privy-provider')).toHaveAttribute(
-      'data-app-id',
+    expect(getByTestId("mock-privy-provider")).toHaveAttribute(
+      "data-app-id",
       testAppId,
     );
   });
 
-  it('handles missing APP_ID gracefully', () => {
+  it("handles missing APP_ID gracefully", () => {
     const consoleSpy = vi
-      .spyOn(console, 'error')
+      .spyOn(console, "error")
       .mockImplementation(() => {}) as MockedFunction<typeof console.error>;
     process.env.NEXT_PUBLIC_PRIVY_APP_ID = undefined;
 
@@ -69,9 +69,9 @@ describe('PrivyProviderWrapper', () => {
     );
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      'Privy App ID is not configured. Please set NEXT_PUBLIC_PRIVY_APP_ID in your environment variables.',
+      "Privy App ID is not configured. Please set NEXT_PUBLIC_PRIVY_APP_ID in your environment variables.",
     );
-    expect(getByTestId('test-child')).toBeInTheDocument();
+    expect(getByTestId("test-child")).toBeInTheDocument();
 
     consoleSpy.mockRestore();
   });

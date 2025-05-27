@@ -1,6 +1,6 @@
 export function truncateBalance(balanceStr: string): string {
   const num = Number.parseFloat(balanceStr);
-  if (num === 0) return '0';
+  if (num === 0) return "0";
 
   if (Number.isInteger(num)) {
     return num.toString();
@@ -26,11 +26,11 @@ export function truncateBalance(balanceStr: string): string {
     result = normalized.toFixed(10);
   }
 
-  result = result.replace(/\.?0+$/, '');
+  result = result.replace(/\.?0+$/, "");
 
-  if (result.endsWith('.')) {
+  if (result.endsWith(".")) {
     result = result.slice(0, -1);
   }
 
-  return result || '0';
+  return result || "0";
 }

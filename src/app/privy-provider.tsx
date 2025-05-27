@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { PrivyProvider } from '@privy-io/react-auth';
-import type { ReactNode } from 'react';
-import type { Chain } from 'viem';
+import { PrivyProvider } from "@privy-io/react-auth";
+import type { ReactNode } from "react";
+import type { Chain } from "viem";
 
 const SEPOLIA_TESTNET: Chain = {
   id: 11155111,
-  name: 'Sepolia',
+  name: "Sepolia",
   nativeCurrency: {
-    name: 'Sepolia Ether',
-    symbol: 'ETH',
+    name: "Sepolia Ether",
+    symbol: "ETH",
     decimals: 18,
   },
   rpcUrls: {
@@ -28,8 +28,8 @@ const SEPOLIA_TESTNET: Chain = {
   },
   blockExplorers: {
     default: {
-      name: 'Etherscan',
-      url: 'https://sepolia.etherscan.io',
+      name: "Etherscan",
+      url: "https://sepolia.etherscan.io",
     },
   },
 };
@@ -43,7 +43,7 @@ export default function PrivyProviderWrapper({
 
   if (!privyAppId) {
     console.error(
-      'Privy App ID is not configured. Please set NEXT_PUBLIC_PRIVY_APP_ID in your environment variables.',
+      "Privy App ID is not configured. Please set NEXT_PUBLIC_PRIVY_APP_ID in your environment variables.",
     );
     return <>{children}</>;
   }
@@ -53,11 +53,11 @@ export default function PrivyProviderWrapper({
       appId={privyAppId}
       config={{
         appearance: {
-          theme: 'light',
-          accentColor: '#676FFF',
+          theme: "light",
+          accentColor: "#676FFF",
           showWalletLoginFirst: false,
         },
-        loginMethods: ['wallet'],
+        loginMethods: ["wallet"],
         defaultChain: SEPOLIA_TESTNET,
         supportedChains: [SEPOLIA_TESTNET],
       }}
