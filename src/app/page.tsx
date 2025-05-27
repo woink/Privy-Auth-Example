@@ -2,7 +2,7 @@
 
 import AuthStatus from "@/components/AuthStatus";
 // import Transfer from "@/components/Transfer";
-import UserWalletSuspense from "@/components/UserWalletSuspense";
+import UserWallet from "@/components/UserWallet";
 import WalletErrorBoundary from "@/components/WalletErrorBoundary";
 import WalletLoading from "@/components/WalletLoading";
 import { usePrivy } from "@privy-io/react-auth";
@@ -20,7 +20,7 @@ export default function Home() {
         {user && (
           <WalletErrorBoundary>
             <Suspense fallback={<WalletLoading />}>
-              <UserWalletSuspense user={user} />
+              <UserWallet user={user} />
             </Suspense>
           </WalletErrorBoundary>
         )}
