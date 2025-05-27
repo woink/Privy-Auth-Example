@@ -1,37 +1,14 @@
 "use client";
 
 import AuthStatus from "@/components/AuthStatus";
-import Transfer from "@/components/Transfer";
-import Wallet from "@/components/Wallet";
-import { publicSepoliaClient } from "@/lib/privy";
-import { truncateBalance } from "@/utils/balance";
+// import Transfer from "@/components/Transfer";
+import UserWallet from "@/components/UserWallet";
+import { useWalletData } from "@/hooks/useWalletData";
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
-import { formatEther } from "viem";
 
 export default function Home() {
-  const [address, setAddress] = useState<PrivyUser["wallet"]["address"]>(null);
-  const [balance, setBalance] = useState<bigint | null>(null);
-
   const { user } = usePrivy();
-
-  useEffect(() => {
-    async function getUserBalance() {
-      const balance = await publicSepoliaClient.getBalance({
-        address: user.wallet.address,
-        chainId: 11155111,
-      });
-
-      const balanceAsEther = String(formatEther(balance));
-      const truncatedBalance = truncateBalance(balanceAsEther);
-      setBalance(truncatedBalance);
-    }
-
-    if (user) {
-      setAddress(user.wallet.address);
-      getUserBalance();
-    }
-  }, [user]);
+  const { address, balance, isLoading, error } = useWalletData(user);
 
   return (
     <>
@@ -39,7 +16,14 @@ export default function Home() {
         <AuthStatus />
       </nav>
       <main className="app">
-        {user && <Wallet balance={balance} address={address} />}
+        {user && (
+          <UserWallet
+            balance={balance}
+            address={address}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
         {/* <Transfer setBalance={setBalance} address={user.address} /> */}
       </main>
     </>
