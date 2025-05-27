@@ -46,7 +46,7 @@ The Next.js implementation combines both frontend and backend into a single Type
 
 1. Navigate to the Next.js app directory:
    ```
-   cd ecdsa-node/next-app
+   cd ecdsa-node-next
    ```
 
 2. Install dependencies:
