@@ -15,10 +15,10 @@ export default function WalletAddress({
   if (!truncated) return <span>{address}</span>;
 
   const [ens, setEns] = useState<GetEnsNameReturnType>(null);
-  const ensName = async () => await publicMainnetClient.getEnsName({ address });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    const ensName = async () =>
+      await publicMainnetClient.getEnsName({ address });
     ensName().then(setEns);
   }, [address]);
 
