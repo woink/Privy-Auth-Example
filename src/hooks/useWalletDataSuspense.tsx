@@ -1,6 +1,6 @@
 import { walletBalanceQueryOptions } from "@/lib/queries/wallet-queries";
 import type { User } from "@privy-io/react-auth";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 interface UseWalletDataSuspenseResult {
   address: string | null;
@@ -18,23 +18,23 @@ export function useWalletDataSuspense(
   user: User | null,
 ): UseWalletDataSuspenseResult {
   const address = user?.wallet?.address || null;
+  const hasWallet = !!address;
 
-  // Always call useSuspenseQuery to maintain hook order
-  // When no address, use a query that resolves immediately
-  // When address exists, use the actual balance query
-  const queryOptions = address
-    ? walletBalanceQueryOptions(address)
-    : {
-        queryKey: ["wallet", "balance", "no-address"] as const,
-        queryFn: async () => "0",
-        staleTime: Number.POSITIVE_INFINITY,
-      };
+  if (!hasWallet) {
+    return {
+      address: null,
+      balance: "0",
+      hasWallet: false,
+    };
+  }
 
-  const { data: balance } = useSuspenseQuery(queryOptions);
+  const { data: balance } = useSuspenseQuery(
+    walletBalanceQueryOptions(address),
+  );
 
   return {
     address,
-    balance,
+    balance: balance || "0",
     hasWallet: !!address,
   };
 }

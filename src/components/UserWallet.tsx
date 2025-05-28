@@ -27,13 +27,13 @@ export default function UserWallet({ user }: UserWalletProps) {
       <h1>Your Wallet</h1>
       <div className="wallet-content">
         <div className="balance">
-          <span className="label">Wallet Address:</span>
+          <span className="label">Wallet Address: </span>
           <span className="value" title={address || ""}>
             {address}
           </span>
         </div>
         <div className="balance">
-          <span className="label">Balance:</span>
+          <span className="label">Balance: </span>
           <span className="value">{balance} ETH</span>
         </div>
       </div>
