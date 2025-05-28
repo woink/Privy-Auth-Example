@@ -45,16 +45,15 @@ function makeQueryClient() {
   });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
-function getQueryClient() {
+function getQueryClient(): QueryClient {
   if (isServer) {
     return makeQueryClient();
   }
-  if (!browserQueryClient) {
-    browserQueryClient = makeQueryClient();
-    return browserQueryClient;
-  }
+  
+  browserQueryClient ??= makeQueryClient();
+  return browserQueryClient;
 }
 
 interface QueryProviderProps {

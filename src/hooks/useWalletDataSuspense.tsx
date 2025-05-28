@@ -25,7 +25,7 @@ export function useWalletDataSuspense(
   const queryOptions = address
     ? walletBalanceQueryOptions(address)
     : {
-        queryKey: ["wallet", "no-address"] as const,
+        queryKey: ["wallet", "balance", "no-address"] as const,
         queryFn: async () => "0",
         staleTime: Number.POSITIVE_INFINITY,
       };
