@@ -10,8 +10,8 @@ export default function UserWallet({ user }: UserWalletProps) {
 
   if (!hasWallet || !address) {
     return (
-      <div className="container wallet">
-        <h1>Your Wallet</h1>
+      <div className="wallet-card">
+        <h1 className="my-3 text-gray-800 text-2xl">Your Wallet</h1>
         <div className="wallet-content">
           <div className="wallet-info">
             <p>No wallet connected</p>
@@ -25,16 +25,16 @@ export default function UserWallet({ user }: UserWalletProps) {
   const balance = useWalletBalance(address);
 
   return (
-    <div className="container wallet">
-      <h1>Your Wallet</h1>
+    <div className="wallet-card">
+      <h1 className="my-3 text-gray-800 text-2xl">Your Wallet</h1>
       <div className="wallet-content">
-        <div className="balance">
+        <div className="wallet-balance">
           <span className="label">Wallet Address: </span>
           <span className="value" title={address || ""}>
             {address}
           </span>
         </div>
-        <div className="balance">
+        <div className="wallet-balance">
           <span className="label">Balance: </span>
           <span className="value">{balance} ETH</span>
         </div>

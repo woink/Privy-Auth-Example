@@ -63,12 +63,13 @@ export default function Transfer({ address, setBalance }: TransferProps) {
   };
 
   return (
-    <form className="container transfer" onSubmit={transfer}>
-      <h1>Send Transaction</h1>
+    <form className="transfer-card" onSubmit={transfer}>
+      <h1 className="my-3 text-gray-800 text-2xl">Send Transaction</h1>
 
-      <label>
+      <label className="form-label">
         Send Amount
         <input
+          className="form-input"
           placeholder="1, 2, 3..."
           value={sendAmount}
           onChange={setValue(setSendAmount)}
@@ -78,9 +79,10 @@ export default function Transfer({ address, setBalance }: TransferProps) {
         />
       </label>
 
-      <label>
+      <label className="form-label">
         Recipient
         <input
+          className="form-input"
           placeholder="Type an address, for example: 0x2"
           value={recipient}
           onChange={setValue(setRecipient)}
@@ -88,11 +90,11 @@ export default function Transfer({ address, setBalance }: TransferProps) {
         />
       </label>
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error-message">{error}</div>}
 
       <input
         type="submit"
-        className="button"
+        className="button-primary"
         value={isLoading ? "Processing..." : "Transfer"}
         disabled={isLoading}
       />

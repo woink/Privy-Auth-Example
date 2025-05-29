@@ -1,56 +1,17 @@
 export default function WalletLoading() {
   return (
-    <div className="container wallet">
-      <h1>Your Wallet</h1>
-      <div className="wallet-content">
-        <div className="balance">
+    <div className="wallet-card">
+      <h1 className="my-3 text-gray-800 text-2xl">Your Wallet</h1>
+      <div className="wallet-content opacity-70">
+        <div className="wallet-balance">
           <span className="label">Wallet Address:</span>
-          <div className="loading-skeleton address-skeleton" />
+          <div className="h-5 w-80 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] animate-pulse rounded inline-block" />
         </div>
-        <div className="balance">
+        <div className="wallet-balance">
           <span className="label">Balance:</span>
-          <div className="loading-skeleton balance-skeleton" />
+          <div className="h-5 w-32 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] animate-pulse rounded inline-block" />
         </div>
       </div>
-
-      <style jsx>{`
-        .wallet-content {
-          opacity: 0.7;
-        }
-        
-        .loading-skeleton {
-          height: 1.25rem;
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 200% 100%;
-          animation: loading 1.5s infinite;
-          border-radius: 0.25rem;
-          display: inline-block;
-        }
-        
-        .address-skeleton {
-          width: 300px;
-        }
-        
-        .balance-skeleton {
-          width: 120px;
-        }
-        
-        @keyframes loading {
-          0% {
-            background-position: 200% 0;
-          }
-          100% {
-            background-position: -200% 0;
-          }
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-          .loading-skeleton {
-            animation: none;
-            background: #e0e0e0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

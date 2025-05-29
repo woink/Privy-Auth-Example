@@ -21,10 +21,10 @@ export default function Home() {
   if (!isClientReady) {
     return (
       <>
-        <nav className="navbar">
+        <nav className="fixed top-0 left-0 w-full bg-white shadow-md">
           <AuthStatus />
         </nav>
-        <main className="app">
+        <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-10">
           <WalletLoading />
         </main>
       </>
@@ -33,10 +33,10 @@ export default function Home() {
 
   return (
     <>
-      <nav className="navbar">
+      <nav className="fixed top-0 left-0 w-full bg-white shadow-md">
         <AuthStatus />
       </nav>
-      <main className="app">
+      <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-10">
         <WalletErrorBoundary>
           <Suspense fallback={<WalletLoading />}>
             <UserWallet user={user} />
