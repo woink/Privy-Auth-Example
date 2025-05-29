@@ -1,4 +1,4 @@
-import { useWalletDataSuspense } from "@/hooks/useWalletDataSuspense";
+import { getWalletInfo, useWalletBalance } from "@/hooks/useWalletDataSuspense";
 import type { User } from "@privy-io/react-auth";
 
 interface UserWalletProps {
@@ -6,9 +6,9 @@ interface UserWalletProps {
 }
 
 export default function UserWallet({ user }: UserWalletProps) {
-  const { address, balance, hasWallet } = useWalletDataSuspense(user);
+  const { address, hasWallet } = getWalletInfo(user);
 
-  if (!hasWallet) {
+  if (!hasWallet || !address) {
     return (
       <div className="container wallet">
         <h1>Your Wallet</h1>
@@ -21,6 +21,8 @@ export default function UserWallet({ user }: UserWalletProps) {
       </div>
     );
   }
+
+  const balance = useWalletBalance(address);
 
   return (
     <div className="container wallet">

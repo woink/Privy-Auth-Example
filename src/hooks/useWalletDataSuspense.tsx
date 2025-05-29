@@ -1,40 +1,28 @@
 import { walletBalanceQueryOptions } from "@/lib/queries/wallet-queries";
 import type { User } from "@privy-io/react-auth";
 import { useSuspenseQuery } from "@tanstack/react-query";
-
-interface UseWalletDataSuspenseResult {
-  address: string | null;
-  balance: string;
-  hasWallet: boolean;
-}
+import { type Address, isAddress } from "viem";
 
 /**
- * Suspense-based hook for wallet data fetching
- *
- * This hook uses React Query's useSuspenseQuery when an address is available,
- * and returns default values immediately when no address is present.
+ * Simple suspense hook for wallet balance
+ * Only call this when you're certain you have a valid address
  */
-export function useWalletDataSuspense(
-  user: User | null,
-): UseWalletDataSuspenseResult {
-  const address = user?.wallet?.address || null;
-  const hasWallet = !!address;
-
-  if (!hasWallet) {
-    return {
-      address: null,
-      balance: "0",
-      hasWallet: false,
-    };
-  }
-
+export function useWalletBalance(address: Address) {
   const { data: balance } = useSuspenseQuery(
     walletBalanceQueryOptions(address),
   );
 
-  return {
-    address,
-    balance: balance || "0",
-    hasWallet: !!address,
-  };
+  return balance;
+}
+
+/**
+ * Utility function to extract wallet data from user
+ */
+export function getWalletInfo(user: User | null) {
+  const rawAddress = user?.wallet?.address;
+  const address =
+    rawAddress && isAddress(rawAddress) ? (rawAddress as Address) : null;
+  const hasWallet = !!address;
+
+  return { address, hasWallet };
 }
