@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface TransferProps {
   address: string;
@@ -63,41 +67,47 @@ export default function Transfer({ address, setBalance }: TransferProps) {
   };
 
   return (
-    <form className="transfer-card" onSubmit={transfer}>
-      <h1 className="my-3 text-gray-800 text-2xl">Send Transaction</h1>
+    <Card className="w-96 m-5">
+      <CardHeader>
+        <CardTitle>Send Transaction</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={transfer} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="amount">Send Amount</Label>
+            <Input
+              id="amount"
+              placeholder="1, 2, 3..."
+              value={sendAmount}
+              onChange={setValue(setSendAmount)}
+              type="number"
+              min="1"
+              disabled={isLoading}
+            />
+          </div>
 
-      <label className="form-label">
-        Send Amount
-        <input
-          className="form-input"
-          placeholder="1, 2, 3..."
-          value={sendAmount}
-          onChange={setValue(setSendAmount)}
-          type="number"
-          min="1"
-          disabled={isLoading}
-        />
-      </label>
+          <div className="space-y-2">
+            <Label htmlFor="recipient">Recipient</Label>
+            <Input
+              id="recipient"
+              placeholder="Type an address, for example: 0x2"
+              value={recipient}
+              onChange={setValue(setRecipient)}
+              disabled={isLoading}
+            />
+          </div>
 
-      <label className="form-label">
-        Recipient
-        <input
-          className="form-input"
-          placeholder="Type an address, for example: 0x2"
-          value={recipient}
-          onChange={setValue(setRecipient)}
-          disabled={isLoading}
-        />
-      </label>
+          {error && <div className="text-destructive text-sm font-medium text-center">{error}</div>}
 
-      {error && <div className="error-message">{error}</div>}
-
-      <input
-        type="submit"
-        className="button-primary"
-        value={isLoading ? "Processing..." : "Transfer"}
-        disabled={isLoading}
-      />
-    </form>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Transfer"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

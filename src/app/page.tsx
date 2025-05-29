@@ -1,6 +1,7 @@
 "use client";
 
 import AuthStatus from "@/components/AuthStatus";
+
 // import Transfer from "@/components/Transfer";
 import UserWallet from "@/components/UserWallet";
 import WalletErrorBoundary from "@/components/WalletErrorBoundary";
@@ -21,10 +22,10 @@ export default function Home() {
   if (!isClientReady) {
     return (
       <>
-        <nav className="fixed top-0 left-0 w-full bg-white shadow-md">
+        <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4">
           <AuthStatus />
         </nav>
-        <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-10">
+        <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-24 p-4">
           <WalletLoading />
         </main>
       </>
@@ -33,15 +34,16 @@ export default function Home() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full bg-white shadow-md">
+      <nav className="fixed top-0 left-0 w-full bg-white shadow-md p-4">
         <AuthStatus />
       </nav>
-      <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-10">
+      <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-24 p-4">
         <WalletErrorBoundary>
           <Suspense fallback={<WalletLoading />}>
             <UserWallet user={user} />
           </Suspense>
         </WalletErrorBoundary>
+
         {/* <Transfer setBalance={setBalance} address={user.address} /> */}
       </main>
     </>
