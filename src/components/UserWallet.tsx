@@ -1,20 +1,17 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getWalletInfo, useWalletBalance } from "@/hooks/useWalletDataSuspense";
-import type { User } from "@privy-io/react-auth";
+import { useWallet } from "@/contexts/WalletContext";
 
-interface UserWalletProps {
-  user: User | null;
-}
-
-export default function UserWallet({ user }: UserWalletProps) {
-  const { address, hasWallet } = getWalletInfo(user);
+export default function UserWallet() {
+  const { hasWallet, address, balance, isLoadingBalance } = useWallet();
 
   if (!hasWallet || !address) {
     return (
       <Card className="w-fit m-5">
-        <CardHeader>
+        {/* <CardHeader>
           <CardTitle>Your Wallet</CardTitle>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent>
           <div className="wallet-info">
             <p>No wallet connected</p>
@@ -25,13 +22,11 @@ export default function UserWallet({ user }: UserWalletProps) {
     );
   }
 
-  const balance = useWalletBalance(address);
-
   return (
     <Card className="w-fit m-5">
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>Your Wallet</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent className="space-y-4">
         <div className="text-lg font-semibold">
           <span className="text-muted-foreground">Wallet Address: </span>
@@ -41,7 +36,9 @@ export default function UserWallet({ user }: UserWalletProps) {
         </div>
         <div className="text-lg font-semibold">
           <span className="text-muted-foreground">Balance: </span>
-          <span>{balance} ETH</span>
+          <span>
+            {isLoadingBalance ? "Loading..." : `${balance || "0"} ETH`}
+          </span>
         </div>
       </CardContent>
     </Card>

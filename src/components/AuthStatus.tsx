@@ -1,28 +1,25 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { usePrivy } from "@privy-io/react-auth";
+import { useWallet } from "@/contexts/WalletContext";
 import { getAddress } from "viem";
 import WalletAddress from "./WalletAddress";
 
 export default function AuthStatus() {
-  const { ready, authenticated, login, logout, user } = usePrivy();
+  const { isReady, isAuthenticated, login, logout, address } = useWallet();
 
-  if (!ready) {
+  if (!isReady) {
     return <div>Loading...</div>;
   }
 
-  if (!authenticated) {
-    return (
-      <Button className="text-black" onClick={login}>
-        Login
-      </Button>
-    );
+  if (!isAuthenticated) {
+    return <Button onClick={login}>Login</Button>;
   }
 
-  const walletAddress =
-    user?.wallet?.address && getAddress(user.wallet.address);
+  const walletAddress = address && getAddress(address);
 
   return (
-    <div className="flex items-center items-start gap-4">
+    <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
         <span className="font-medium">Wallet:</span>
         {walletAddress ? (
@@ -31,7 +28,7 @@ export default function AuthStatus() {
           <span className="text-gray-500">No wallet connected</span>
         )}
       </div>
-      <Button className="text-black" variant="destructive" onClick={logout}>
+      <Button variant="destructive" onClick={logout}>
         Logout
       </Button>
     </div>

@@ -4,9 +4,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function WalletLoading() {
   return (
     <Card className="w-fit m-5">
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>Your Wallet</CardTitle>
-      </CardHeader>
+      </CardHeader> */}
       <CardContent className="space-y-4">
         <div className="text-lg font-semibold">
           <span className="text-muted-foreground">Wallet Address:</span>
