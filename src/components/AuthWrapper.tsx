@@ -1,16 +1,16 @@
 "use client";
 
+import { useWallet } from "@/contexts/WalletContext";
 import { Suspense } from "react";
 import UserWallet from "./UserWallet";
 import WalletErrorBoundary from "./WalletErrorBoundary";
 import WalletLoading from "./WalletLoading";
-import { WalletProvider, useWallet } from "@/contexts/WalletContext";
 
 interface AuthWrapperProps {
   children?: React.ReactNode;
 }
 
-function AuthWrapperContent({ children }: AuthWrapperProps) {
+export default function AuthWrapper({ children }: AuthWrapperProps) {
   const { isReady } = useWallet();
 
   if (!isReady) {
@@ -24,13 +24,5 @@ function AuthWrapperContent({ children }: AuthWrapperProps) {
         {children}
       </Suspense>
     </WalletErrorBoundary>
-  );
-}
-
-export default function AuthWrapper({ children }: AuthWrapperProps) {
-  return (
-    <WalletProvider>
-      <AuthWrapperContent>{children}</AuthWrapperContent>
-    </WalletProvider>
   );
 }

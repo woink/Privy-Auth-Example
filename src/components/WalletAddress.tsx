@@ -22,5 +22,7 @@ export default function WalletAddress({
     ensName().then(setEns);
   }, [address]);
 
-  return <span>{ens || `${address.slice(0, 6)}...${address.slice(-4)}`}</span>;
+  return (
+    <span className="font-mono">{ens || `${address.slice(0, 6)}...`}</span>
+  );
 }

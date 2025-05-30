@@ -1,4 +1,7 @@
 import "./globals.scss";
+import Navigation from "@/components/Navigation";
+import Toast from "@/components/Toast";
+import { WalletProvider } from "@/contexts/WalletContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import PrivyProviderWrapper from "./privy-provider";
@@ -21,7 +24,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-slate-200`}>
         <PrivyProviderWrapper>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <WalletProvider>
+              <Navigation />
+              <main className="flex items-center justify-center flex-wrap max-w-7xl mx-auto pt-24 p-4">
+                {children}
+              </main>
+              <Toast />
+            </WalletProvider>
+          </QueryProvider>
         </PrivyProviderWrapper>
       </body>
     </html>

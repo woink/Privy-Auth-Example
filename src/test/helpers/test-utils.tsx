@@ -1,5 +1,5 @@
 import { PrivyProvider } from "@privy-io/react-auth";
-import type { User } from "@privy-io/react-auth";
+import type { User, Wallet } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type RenderOptions, render } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
@@ -15,7 +15,7 @@ export const createMockUser = (overrides?: Partial<User>): User => ({
   isGuest: false,
   wallet: {
     address: "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2",
-  } as any,
+  } as Wallet,
   ...overrides,
 });
 
