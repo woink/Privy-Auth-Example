@@ -22,6 +22,10 @@ export interface TransferParams {
   from: Address;
   to: Address;
   amount: string; // Amount in ETH as string
+  sendTransaction: (params: {
+    to: string;
+    value: string;
+  }) => Promise<{ hash: string }>;
 }
 
 /**
@@ -39,7 +43,7 @@ export interface TransactionResult {
  * Validate transfer parameters
  */
 const validateTransferParams = (params: TransferParams): void => {
-  const { from, to, amount } = params;
+  const { from, to, amount, sendTransaction } = params;
 
   // Validate from address
   if (!from || !from.startsWith("0x") || from.length !== 42) {
@@ -75,6 +79,14 @@ const validateTransferParams = (params: TransferParams): void => {
       "Cannot send to the same address",
       "SAME_ADDRESS",
       { from, to }
+    );
+  }
+
+  // Validate sendTransaction function
+  if (!sendTransaction || typeof sendTransaction !== "function") {
+    throw new TransactionError(
+      "Send transaction function is required",
+      "MISSING_SEND_FUNCTION"
     );
   }
 };
@@ -144,7 +156,7 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
   // Validate parameters
   validateTransferParams(params);
 
-  const { from, to, amount } = params;
+  const { from, to, amount, sendTransaction } = params;
 
   try {
     // Check sufficient balance
@@ -153,30 +165,17 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
     // Estimate gas (for validation, actual gas will be estimated by wallet)
     await estimateTransactionGas(params);
 
-    // Note: In a real implementation, you would need to:
-    // 1. Get the user's wallet client (from Privy or other wallet provider)
-    // 2. Use wallet client to send the transaction
-    // 
-    // For now, we'll simulate the transaction structure
-    // This would be replaced with actual wallet interaction:
-    
-    /*
-    const walletClient = await getWalletClient();
-    const hash = await walletClient.sendTransaction({
-      account: from,
+    // Convert amount to wei for blockchain transaction
+    const valueInWei = parseEther(amount);
+
+    // Send the real transaction using Privy
+    const result = await sendTransaction({
       to,
-      value: parseEther(amount),
+      value: valueInWei.toString(),
     });
-    */
-
-    // Simulated response - replace with actual implementation
-    const simulatedHash = `0x${Date.now().toString(16)}${Math.random().toString(16).slice(2)}` as Hash;
-
-    // Wait for transaction confirmation
-    // const receipt = await publicSepoliaClient.waitForTransactionReceipt({ hash });
 
     return {
-      hash: simulatedHash,
+      hash: result.hash as Hash,
       from,
       to,
       amount,
@@ -302,6 +301,10 @@ export const getTransactionErrorMessage = (error: unknown): string => {
         return "Network error. Please check your connection and try again";
       case "CONFIRMATION_ERROR":
         return "Transaction confirmation failed or timed out";
+      case "MISSING_SEND_FUNCTION":
+        return "Wallet connection error. Please reconnect your wallet";
+      case "NO_WALLET_CONNECTION":
+        return "No connected wallet found. Please connect your wallet";
       default:
         return error.message;
     }

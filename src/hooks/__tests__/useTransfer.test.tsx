@@ -153,6 +153,7 @@ describe("useTransfer", () => {
         from: "0x1234567890123456789012345678901234567890",
         to: "0x0987654321098765432109876543210987654321",
         amount: "1.0",
+        sendTransaction: expect.any(Function),
       });
 
       expect(result.current.data).toEqual(mockResult);

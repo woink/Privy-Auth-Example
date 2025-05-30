@@ -84,6 +84,8 @@ export const transferMutationOptions: UseMutationOptions<
         "SAME_ADDRESS",
         "INSUFFICIENT_BALANCE",
         "USER_REJECTED",
+        "MISSING_SEND_FUNCTION",
+        "NO_WALLET_CONNECTION",
       ].includes(error.code)) {
         return false;
       }
