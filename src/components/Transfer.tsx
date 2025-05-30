@@ -5,6 +5,7 @@ import { useTransfer } from "@/hooks/useTransfer";
 import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import TransactionErrorBoundary from "./TransactionErrorBoundary";
+import { TransactionLink } from "./TransactionLink";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -30,10 +31,10 @@ export default function Transfer() {
     senderAddress,
     isAuthenticated,
   } = useTransfer({
-    onSuccess: () => {
+    onSuccess: (_data) => {
       toast({
         title: "Transaction Sent",
-        description: `Successfully sent ${sendAmount} ETH to ${recipient}`,
+        description: `Successfully sent ${sendAmount} ETH to ${recipient}. Check Etherscan for details.`,
       });
       // Reset form on success
       setSendAmount("");
@@ -208,12 +209,16 @@ export default function Transfer() {
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
                   <div className="text-sm">
-                    <p className="text-green-800 dark:text-green-200">
+                    <p className="text-green-800 dark:text-green-200 mb-1">
                       Transaction sent successfully!
                     </p>
-                    <p className="text-xs text-green-600 dark:text-green-400 font-mono">
-                      Hash: {data.hash}
-                    </p>
+                    <div className="text-xs text-green-600 dark:text-green-400">
+                      <span>View on Etherscan: </span>
+                      <TransactionLink
+                        hash={data.hash}
+                        className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

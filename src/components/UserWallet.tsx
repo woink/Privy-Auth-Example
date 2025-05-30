@@ -12,9 +12,6 @@ export default function UserWallet() {
   if (!hasWallet || !address) {
     return (
       <Card className="w-fit m-5">
-        {/* <CardHeader>
-          <CardTitle>Your Wallet</CardTitle>
-        </CardHeader> */}
         <CardContent>
           <div className="wallet-info">
             <p className="font-mono">No wallet connected</p>
@@ -29,9 +26,6 @@ export default function UserWallet() {
 
   return (
     <Card className="w-fit m-5">
-      {/* <CardHeader>
-        <CardTitle>Your Wallet</CardTitle>
-      </CardHeader> */}
       <CardContent className="space-y-4">
         <div>
           <div className="flex items-center gap-2">

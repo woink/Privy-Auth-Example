@@ -11,18 +11,16 @@ interface AuthWrapperProps {
 }
 
 export default function AuthWrapper({ children }: AuthWrapperProps) {
-  const { isReady } = useWallet();
+  const { hasWallet } = useWallet();
 
-  if (!isReady) {
-    return <WalletLoading />;
+  if (hasWallet) {
+    return (
+      <WalletErrorBoundary>
+        <Suspense fallback={<WalletLoading />}>
+          <UserWallet />
+          {children}
+        </Suspense>
+      </WalletErrorBoundary>
+    );
   }
-
-  return (
-    <WalletErrorBoundary>
-      <Suspense fallback={<WalletLoading />}>
-        <UserWallet />
-        {children}
-      </Suspense>
-    </WalletErrorBoundary>
-  );
 }
