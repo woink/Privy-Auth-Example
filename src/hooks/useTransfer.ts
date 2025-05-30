@@ -126,7 +126,8 @@ export function useTransfer(
           return await sendTransaction(params);
         } catch (error: unknown) {
           // If embedded wallet fails, try external wallet
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           if (
             errorMessage.includes("embedded wallet") ||
             errorMessage.includes("User must have an embedded wallet")

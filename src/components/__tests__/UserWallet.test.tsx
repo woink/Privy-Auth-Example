@@ -1,219 +1,269 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import UserWallet from "../UserWallet";
 
+// Mock the WalletContext
+vi.mock("@/contexts/WalletContext", () => ({
+  useWallet: vi.fn(),
+}));
+
+// Mock the WalletAddress component
+vi.mock("../WalletAddress", () => ({
+  default: ({ address }: { address: string }) => (
+    <span data-testid="wallet-address">{address}</span>
+  ),
+}));
+
+// Mock the Card components
+vi.mock("@/components/ui/card", () => ({
+  Card: ({ children, className }: any) => (
+    <div className={className} data-testid="card">
+      {children}
+    </div>
+  ),
+  CardContent: ({ children, className }: any) => (
+    <div className={className} data-testid="card-content">
+      {children}
+    </div>
+  ),
+  CardHeader: ({ children }: any) => <div data-testid="card-header">{children}</div>,
+  CardTitle: ({ children }: any) => <h1 data-testid="card-title">{children}</h1>,
+}));
+
+// Mock viem's getAddress function
+vi.mock("viem", () => ({
+  getAddress: (address: string) => address.toLowerCase(),
+}));
+
+import { useWallet } from "@/contexts/WalletContext";
+
 describe("UserWallet", () => {
-  const defaultProps = {
-    address: null,
-    balance: null,
-    isLoading: false,
-    error: null,
-  };
+  const mockUseWallet = useWallet as ReturnType<typeof vi.fn>;
 
-  describe("rendering", () => {
-    it("should render wallet container with title", () => {
-      render(<UserWallet {...defaultProps} />);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
+  describe("when user has no wallet", () => {
+    it("should display no wallet connected message", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: false,
+        address: null,
+        balance: undefined,
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
+
+      render(<UserWallet />);
+
+      expect(screen.getByText("No wallet connected")).toBeInTheDocument();
       expect(
-        screen.getByRole("heading", { name: "Your Wallet" }),
+        screen.getByText("Please connect your wallet to view balance information.")
       ).toBeInTheDocument();
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
     });
 
-    it("should have correct CSS classes", () => {
-      render(<UserWallet {...defaultProps} />);
+    it("should render in a card with correct styling", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: false,
+        address: null,
+        balance: undefined,
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      const container = screen.getByText("Your Wallet").closest(".container");
-      expect(container).toHaveClass("container", "wallet");
+      render(<UserWallet />);
+
+      const card = screen.getByTestId("card");
+      expect(card).toHaveClass("w-fit", "m-5");
     });
   });
 
-  describe("address display", () => {
-    it("should display wallet address when provided", () => {
-      const address = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      render(<UserWallet {...defaultProps} address={address} />);
+  describe("when user has a wallet", () => {
+    const mockAddress = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
 
-      expect(
-        screen.getByText(`Wallet Address: ${address}`),
-      ).toBeInTheDocument();
+    it("should display wallet address and balance", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: "1.5",
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
+
+      render(<UserWallet />);
+
+      expect(screen.getByText("Wallet:")).toBeInTheDocument();
+      expect(screen.getByTestId("wallet-address")).toHaveTextContent(mockAddress.toLowerCase());
+      expect(screen.getByText("Balance:")).toBeInTheDocument();
+      expect(screen.getByText("1.5 ETH")).toBeInTheDocument();
     });
 
-    it("should display null when address is null", () => {
-      render(<UserWallet {...defaultProps} address={null} />);
+    it("should show loading state for balance", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: undefined,
+        isLoadingBalance: true,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
+      render(<UserWallet />);
+
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
     });
 
-    it("should display empty string when address is empty", () => {
-      render(<UserWallet {...defaultProps} address="" />);
+    it("should display zero balance when balance is null", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: null,
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
+      render(<UserWallet />);
+
+      expect(screen.getByText("0 ETH")).toBeInTheDocument();
     });
 
-    it("should handle long addresses", () => {
-      const longAddress =
-        "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      render(<UserWallet {...defaultProps} address={longAddress} />);
+    it("should display zero balance when balance is undefined", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: undefined,
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      expect(
-        screen.getByText(`Wallet Address: ${longAddress}`),
-      ).toBeInTheDocument();
+      render(<UserWallet />);
+
+      expect(screen.getByText("0 ETH")).toBeInTheDocument();
+    });
+
+    it("should have correct styling classes", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: "1.5",
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
+
+      render(<UserWallet />);
+
+      const card = screen.getByTestId("card");
+      expect(card).toHaveClass("w-fit", "m-5");
+
+      const cardContent = screen.getByTestId("card-content");
+      expect(cardContent).toHaveClass("space-y-4");
+    });
+
+    it("should handle font-mono classes correctly", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: mockAddress,
+        balance: "1.5",
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
+
+      render(<UserWallet />);
+
+      const walletLabel = screen.getByText("Wallet:");
+      expect(walletLabel).toHaveClass("font-semibold", "font-mono");
+
+      const balanceLabel = screen.getByText("Balance:");
+      expect(balanceLabel).toHaveClass("text-muted-foreground", "font-semibold", "font-mono");
     });
   });
 
-  describe("balance display", () => {
-    it("should display balance when provided", () => {
-      const balance = "1.5";
-      render(<UserWallet {...defaultProps} balance={balance} />);
+  describe("edge cases", () => {
+    it("should handle missing address gracefully", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: true,
+        address: null,
+        balance: "1.5",
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      expect(screen.getByText(`Balance: ${balance}`)).toBeInTheDocument();
+      render(<UserWallet />);
+
+      expect(screen.getByText("No wallet connected")).toBeInTheDocument();
     });
 
-    it("should display zero balance", () => {
-      render(<UserWallet {...defaultProps} balance="0" />);
-
-      expect(screen.getByText("Balance: 0")).toBeInTheDocument();
-    });
-
-    it("should display very small balances", () => {
-      const smallBalance = "0.000001";
-      render(<UserWallet {...defaultProps} balance={smallBalance} />);
-
-      expect(screen.getByText(`Balance: ${smallBalance}`)).toBeInTheDocument();
-    });
-
-    it("should display large balances", () => {
-      const largeBalance = "999999.123456";
-      render(<UserWallet {...defaultProps} balance={largeBalance} />);
-
-      expect(screen.getByText(`Balance: ${largeBalance}`)).toBeInTheDocument();
-    });
-
-    it("should handle null balance", () => {
-      render(<UserWallet {...defaultProps} balance={null} />);
-
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-
-    it("should handle empty string balance", () => {
-      render(<UserWallet {...defaultProps} balance="" />);
-
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-  });
-
-  describe("combined address and balance", () => {
-    it("should display both address and balance when provided", () => {
-      const address = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      const balance = "42.123456";
-
-      render(
-        <UserWallet {...defaultProps} address={address} balance={balance} />,
-      );
-
-      expect(
-        screen.getByText(`Wallet Address: ${address}`),
-      ).toBeInTheDocument();
-      expect(screen.getByText(`Balance: ${balance}`)).toBeInTheDocument();
-    });
-
-    it("should handle mismatched null values", () => {
-      const address = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-
-      render(<UserWallet {...defaultProps} address={address} balance={null} />);
-
-      expect(
-        screen.getByText(`Wallet Address: ${address}`),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-  });
-
-  describe("props that are not currently used but passed", () => {
-    it("should render correctly with isLoading true", () => {
-      render(<UserWallet {...defaultProps} isLoading={true} />);
-
-      expect(screen.getByText("Your Wallet")).toBeInTheDocument();
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-
-    it("should render correctly with error", () => {
-      render(<UserWallet {...defaultProps} error="Network error" />);
-
-      expect(screen.getByText("Your Wallet")).toBeInTheDocument();
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-
-    it("should render correctly with all props provided", () => {
-      const props = {
+    it("should handle hasWallet false but address present", () => {
+      mockUseWallet.mockReturnValue({
+        hasWallet: false,
         address: "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2",
         balance: "1.5",
-        isLoading: true,
-        error: "Some error",
-      };
+        isLoadingBalance: false,
+        isAuthenticated: true,
+        isReady: true,
+        user: { id: "test-user" },
+        balanceError: null,
+        login: vi.fn(),
+        logout: vi.fn(),
+        refreshBalance: vi.fn(),
+      });
 
-      render(<UserWallet {...props} />);
+      render(<UserWallet />);
 
-      expect(
-        screen.getByText(`Wallet Address: ${props.address}`),
-      ).toBeInTheDocument();
-      expect(screen.getByText(`Balance: ${props.balance}`)).toBeInTheDocument();
-    });
-  });
-
-  describe("suspense integration", () => {
-    it("should render without suspense fallback when not loading", () => {
-      render(<UserWallet {...defaultProps} />);
-
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-      expect(screen.getByText("Wallet Address:")).toBeInTheDocument();
-      expect(screen.getByText("Balance:")).toBeInTheDocument();
-    });
-
-    it("should render content inside Suspense boundary", () => {
-      const address = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      const balance = "1.5";
-
-      render(
-        <UserWallet {...defaultProps} address={address} balance={balance} />,
-      );
-
-      // Content should be rendered (not suspended)
-      expect(
-        screen.getByText(`Wallet Address: ${address}`),
-      ).toBeInTheDocument();
-      expect(screen.getByText(`Balance: ${balance}`)).toBeInTheDocument();
-    });
-  });
-
-  describe("accessibility", () => {
-    it("should have proper heading structure", () => {
-      render(<UserWallet {...defaultProps} />);
-
-      const heading = screen.getByRole("heading", { name: "Your Wallet" });
-      expect(heading).toBeInTheDocument();
-      expect(heading.tagName).toBe("H1");
-    });
-
-    it("should have proper text content for screen readers", () => {
-      const address = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      const balance = "1.5";
-
-      render(
-        <UserWallet {...defaultProps} address={address} balance={balance} />,
-      );
-
-      expect(
-        screen.getByText((content, element) =>
-          content.includes("Wallet Address:"),
-        ),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText((content, element) => content.includes("Balance:")),
-      ).toBeInTheDocument();
+      expect(screen.getByText("No wallet connected")).toBeInTheDocument();
     });
   });
 });

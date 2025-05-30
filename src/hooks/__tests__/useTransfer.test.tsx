@@ -1,10 +1,10 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
-import { useTransfer } from "../useTransfer";
 import { useWallet } from "@/contexts/WalletContext";
 import { TransactionError } from "@/lib/blockchain/transactions";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useTransfer } from "../useTransfer";
 
 // Mock the wallet context
 vi.mock("@/contexts/WalletContext");
@@ -43,7 +43,9 @@ describe("useTransfer", () => {
     mockUseWallet.mockReturnValue({
       isReady: true,
       isAuthenticated: true,
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       user: { wallet: { address: "0x123" } } as any,
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       address: "0x1234567890123456789012345678901234567890" as any,
       hasWallet: true,
       balance: "1.0",
@@ -72,7 +74,9 @@ describe("useTransfer", () => {
       expect(result.current.error).toBe(null);
       expect(result.current.data).toBe(undefined);
       expect(result.current.canTransfer).toBe(true);
-      expect(result.current.senderAddress).toBe("0x1234567890123456789012345678901234567890");
+      expect(result.current.senderAddress).toBe(
+        "0x1234567890123456789012345678901234567890",
+      );
       expect(result.current.hasWallet).toBe(true);
       expect(result.current.isAuthenticated).toBe(true);
     });
@@ -104,6 +108,7 @@ describe("useTransfer", () => {
       mockUseWallet.mockReturnValue({
         isReady: true,
         isAuthenticated: true,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         user: { wallet: null } as any,
         address: null,
         hasWallet: false,
@@ -127,8 +132,11 @@ describe("useTransfer", () => {
   describe("transfer function", () => {
     it("should successfully transfer funds", async () => {
       const mockResult = {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         hash: "0xabc123" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         from: "0x1234567890123456789012345678901234567890" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         to: "0x0987654321098765432109876543210987654321" as any,
         amount: "1.0",
         timestamp: Date.now(),
@@ -156,12 +164,17 @@ describe("useTransfer", () => {
         sendTransaction: expect.any(Function),
       });
 
-      expect(result.current.data).toEqual(mockResult);
-      expect(result.current.isError).toBe(false);
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockResult);
+        expect(result.current.isError).toBe(false);
+      });
     });
 
     it("should handle transfer errors", async () => {
-      const mockError = new TransactionError("Insufficient balance", "INSUFFICIENT_BALANCE");
+      const mockError = new TransactionError(
+        "Insufficient balance",
+        "INSUFFICIENT_BALANCE",
+      );
       mockSendTransfer.mockRejectedValueOnce(mockError);
 
       const { result } = renderHook(() => useTransfer(), {
@@ -221,6 +234,7 @@ describe("useTransfer", () => {
       mockUseWallet.mockReturnValue({
         isReady: true,
         isAuthenticated: true,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         user: { wallet: null } as any,
         address: null,
         hasWallet: false,
@@ -254,8 +268,11 @@ describe("useTransfer", () => {
     it("should call onSuccess callback when transfer succeeds", async () => {
       const onSuccess = vi.fn();
       const mockResult = {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         hash: "0xabc123" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         from: "0x1234567890123456789012345678901234567890" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         to: "0x0987654321098765432109876543210987654321" as any,
         amount: "1.0",
         timestamp: Date.now(),
@@ -279,7 +296,10 @@ describe("useTransfer", () => {
 
     it("should call onError callback when transfer fails", async () => {
       const onError = vi.fn();
-      const mockError = new TransactionError("Insufficient balance", "INSUFFICIENT_BALANCE");
+      const mockError = new TransactionError(
+        "Insufficient balance",
+        "INSUFFICIENT_BALANCE",
+      );
       mockSendTransfer.mockRejectedValueOnce(mockError);
 
       const { result } = renderHook(() => useTransfer({ onError }), {
@@ -305,8 +325,11 @@ describe("useTransfer", () => {
     it("should call onSettled callback regardless of outcome", async () => {
       const onSettled = vi.fn();
       const mockResult = {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         hash: "0xabc123" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         from: "0x1234567890123456789012345678901234567890" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         to: "0x0987654321098765432109876543210987654321" as any,
         amount: "1.0",
         timestamp: Date.now(),
@@ -331,7 +354,10 @@ describe("useTransfer", () => {
 
   describe("helper functions", () => {
     it("should return user-friendly error message", async () => {
-      const mockError = new TransactionError("Insufficient balance", "INSUFFICIENT_BALANCE");
+      const mockError = new TransactionError(
+        "Insufficient balance",
+        "INSUFFICIENT_BALANCE",
+      );
       mockSendTransfer.mockRejectedValueOnce(mockError);
 
       const { result } = renderHook(() => useTransfer(), {
@@ -350,12 +376,17 @@ describe("useTransfer", () => {
       });
 
       await waitFor(() => {
-        expect(result.current.getUserFriendlyError()).toBe("Insufficient balance for this transaction");
+        expect(result.current.getUserFriendlyError()).toBe(
+          "Insufficient balance for this transaction",
+        );
       });
     });
 
     it("should reset mutation state", async () => {
-      const mockError = new TransactionError("Insufficient balance", "INSUFFICIENT_BALANCE");
+      const mockError = new TransactionError(
+        "Insufficient balance",
+        "INSUFFICIENT_BALANCE",
+      );
       mockSendTransfer.mockRejectedValueOnce(mockError);
 
       const { result } = renderHook(() => useTransfer(), {
@@ -377,21 +408,26 @@ describe("useTransfer", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      act(() => {
+      await act(() => {
         result.current.reset();
       });
 
-      expect(result.current.isError).toBe(false);
-      expect(result.current.error).toBe(null);
-      expect(result.current.data).toBe(undefined);
+      await waitFor(() => {
+        expect(result.current.isError).toBe(false);
+        expect(result.current.error).toBe(null);
+        expect(result.current.data).toBe(undefined);
+      });
     });
   });
 
   describe("loading states", () => {
     it("should show pending state during transfer", async () => {
       const mockResult = {
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         hash: "0xabc123" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         from: "0x1234567890123456789012345678901234567890" as any,
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         to: "0x0987654321098765432109876543210987654321" as any,
         amount: "1.0",
         timestamp: Date.now(),
@@ -410,26 +446,30 @@ describe("useTransfer", () => {
       });
 
       // Start the transfer
-      act(() => {
+      await act(async () => {
         result.current.transfer({
           recipient: "0x0987654321098765432109876543210987654321",
           amount: "1.0",
         });
       });
 
-      // Should be pending
-      expect(result.current.isPending).toBe(true);
-      expect(result.current.canTransfer).toBe(false); // Can't transfer while pending
+      // Should be pending initially
+      await waitFor(() => {
+        expect(result.current.isPending).toBe(true);
+        expect(result.current.canTransfer).toBe(false); // Can't transfer while pending
+      });
 
       // Resolve the transfer
       await act(async () => {
-        resolveTransfer!(mockResult);
+        resolveTransfer(mockResult);
         await transferPromise;
       });
 
       // Should no longer be pending
-      expect(result.current.isPending).toBe(false);
-      expect(result.current.canTransfer).toBe(true);
+      await waitFor(() => {
+        expect(result.current.isPending).toBe(false);
+        expect(result.current.canTransfer).toBe(true);
+      });
     });
   });
 });

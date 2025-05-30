@@ -1,11 +1,10 @@
-import { act, renderHook } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type ReactNode } from "react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { parseEther } from "viem";
-
-import { useTransfer } from "../useTransfer";
 import { TransactionError } from "@/lib/blockchain/transactions";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { act, renderHook } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { parseEther } from "viem";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useTransfer } from "../useTransfer";
 
 // Mock the wallet context
 const mockWalletContext = {
@@ -53,9 +52,7 @@ function createWrapper() {
 
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };
 }
@@ -63,13 +60,13 @@ function createWrapper() {
 describe("useTransfer Integration", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Setup default mocks for successful transaction
     const balance = parseEther("10.0");
     mockClient.getBalance.mockResolvedValue(balance);
-    mockClient.estimateGas.mockResolvedValue(21000n);
-    mockClient.getGasPrice.mockResolvedValue(20000000000n);
-    
+    mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+    mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
+
     // Setup default wallets mock
     mockWallets.mockReturnValue([]);
   });
@@ -92,7 +89,9 @@ describe("useTransfer Integration", () => {
 
       expect(transferResult.hash).toBe(mockTransactionHash);
       expect(transferResult.from).toBe(mockWalletContext.address);
-      expect(transferResult.to).toBe("0x0987654321098765432109876543210987654321");
+      expect(transferResult.to).toBe(
+        "0x0987654321098765432109876543210987654321",
+      );
       expect(transferResult.amount).toBe("1.5");
     });
 
@@ -127,13 +126,13 @@ describe("useTransfer Integration", () => {
         result.current.transfer({
           recipient: "0x0987654321098765432109876543210987654321",
           amount: "1.0",
-        })
+        }),
       ).rejects.toThrow(TransactionError);
     });
 
     // Verify sendTransaction was NOT called due to validation failure
     expect(mockSendTransaction).not.toHaveBeenCalled();
-    
+
     // But balance check was performed
     expect(mockClient.getBalance).toHaveBeenCalledWith({
       address: mockWalletContext.address,
@@ -141,7 +140,9 @@ describe("useTransfer Integration", () => {
   });
 
   it("should handle Privy transaction errors", async () => {
-    mockSendTransaction.mockRejectedValue(new Error("User rejected transaction"));
+    mockSendTransaction.mockRejectedValue(
+      new Error("User rejected transaction"),
+    );
 
     const { result } = renderHook(() => useTransfer(), {
       wrapper: createWrapper(),
@@ -152,7 +153,7 @@ describe("useTransfer Integration", () => {
         result.current.transfer({
           recipient: "0x0987654321098765432109876543210987654321",
           amount: "1.0",
-        })
+        }),
       ).rejects.toThrow("Transaction was rejected by user");
     });
 
@@ -172,7 +173,7 @@ describe("useTransfer Integration", () => {
         result.current.transfer({
           recipient: "invalid-address",
           amount: "1.0",
-        })
+        }),
       ).rejects.toThrow("No recipent wallet address available");
     });
 
@@ -193,7 +194,7 @@ describe("useTransfer Integration", () => {
         result.current.transfer({
           recipient: "0x0987654321098765432109876543210987654321",
           amount: "1.0",
-        })
+        }),
       ).rejects.toThrow("Transaction failed due to gas issues");
     });
 
@@ -206,17 +207,19 @@ describe("useTransfer Integration", () => {
     const mockProvider = {
       request: vi.fn().mockResolvedValue(mockTransactionHash),
     };
-    
+
     // Mock external wallet
     const mockExternalWallet = {
       address: mockWalletContext.address,
       getEthereumProvider: vi.fn().mockResolvedValue(mockProvider),
     };
-    
+
     mockWallets.mockReturnValue([mockExternalWallet]);
-    
+
     // Mock embedded wallet to fail first
-    mockSendTransaction.mockRejectedValue(new Error("User must have an embedded wallet"));
+    mockSendTransaction.mockRejectedValue(
+      new Error("User must have an embedded wallet"),
+    );
 
     const { result } = renderHook(() => useTransfer(), {
       wrapper: createWrapper(),
@@ -240,17 +243,21 @@ describe("useTransfer Integration", () => {
     // Verify external wallet provider was called
     expect(mockProvider.request).toHaveBeenCalledWith({
       method: "eth_sendTransaction",
-      params: [{
-        from: mockWalletContext.address,
-        to: "0x0987654321098765432109876543210987654321",
-        value: `0x${BigInt(parseEther("0.5").toString()).toString(16)}`,
-      }],
+      params: [
+        {
+          from: mockWalletContext.address,
+          to: "0x0987654321098765432109876543210987654321",
+          value: `0x${BigInt(parseEther("0.5").toString()).toString(16)}`,
+        },
+      ],
     });
   });
 
   it("should handle case when no external wallet is found", async () => {
     // Mock embedded wallet to fail
-    mockSendTransaction.mockRejectedValue(new Error("User must have an embedded wallet"));
+    mockSendTransaction.mockRejectedValue(
+      new Error("User must have an embedded wallet"),
+    );
     // No wallets available
     mockWallets.mockReturnValue([]);
 
@@ -263,7 +270,7 @@ describe("useTransfer Integration", () => {
         result.current.transfer({
           recipient: "0x0987654321098765432109876543210987654321",
           amount: "1.0",
-        })
+        }),
       ).rejects.toThrow("No connected wallet found");
     });
 

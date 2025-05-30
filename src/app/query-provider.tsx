@@ -51,7 +51,7 @@ function getQueryClient(): QueryClient {
   if (isServer) {
     return makeQueryClient();
   }
-  
+
   browserQueryClient ??= makeQueryClient();
   return browserQueryClient;
 }

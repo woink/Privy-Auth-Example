@@ -1,4 +1,4 @@
-import { type Hash } from "viem";
+import type { Hash } from "viem";
 
 /**
  * Supported Etherscan networks
@@ -22,7 +22,7 @@ const ETHERSCAN_BASE_URLS: Record<EtherscanNetwork, string> = {
  */
 export function getTransactionUrl(
   hash: Hash,
-  network: EtherscanNetwork = "sepolia"
+  network: EtherscanNetwork = "sepolia",
 ): string {
   const baseUrl = ETHERSCAN_BASE_URLS[network];
   return `${baseUrl}/tx/${hash}`;
@@ -36,7 +36,7 @@ export function getTransactionUrl(
  */
 export function getAddressUrl(
   address: string,
-  network: EtherscanNetwork = "sepolia"
+  network: EtherscanNetwork = "sepolia",
 ): string {
   const baseUrl = ETHERSCAN_BASE_URLS[network];
   return `${baseUrl}/address/${address}`;
@@ -50,7 +50,7 @@ export function getAddressUrl(
  */
 export function getBlockUrl(
   blockNumber: number | string,
-  network: EtherscanNetwork = "sepolia"
+  network: EtherscanNetwork = "sepolia",
 ): string {
   const baseUrl = ETHERSCAN_BASE_URLS[network];
   return `${baseUrl}/block/${blockNumber}`;
@@ -73,9 +73,9 @@ export function extractHashFromUrl(url: string): Hash | null {
  */
 export function isEtherscanUrl(url: string): boolean {
   const etherscanDomains = Object.values(ETHERSCAN_BASE_URLS).map(
-    (baseUrl) => new URL(baseUrl).hostname
+    (baseUrl) => new URL(baseUrl).hostname,
   );
-  
+
   try {
     const urlObj = new URL(url);
     return etherscanDomains.includes(urlObj.hostname);

@@ -1,29 +1,19 @@
-import { fetchWalletBalance } from "@/lib/queries/wallet-queries";
+import { fetchWalletBalance, walletBalanceQueryOptions } from "@/lib/queries/wallet-queries";
 import type { User } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
-import { Suspense } from "react";
+import { renderHook, waitFor, act } from "@testing-library/react";
+import { Suspense, Component } from "react";
 import { type Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { useWalletDataSuspense } from "../useWalletDataSuspense";
 
 // Mock the wallet queries
 vi.mock("@/lib/queries/wallet-queries", () => ({
   fetchWalletBalance: vi.fn(),
-  walletBalanceQueryOptions: (address: string | null) => ({
-    queryKey: address ? ["wallet", "balance", address] : [],
-    queryFn: () => {
-      if (!address) {
-        throw new Error("No address provided");
-      }
-      return fetchWalletBalance(address);
-    },
-    enabled: !!address,
-    staleTime: 30 * 1000,
-    gcTime: 5 * 60 * 1000,
-  }),
+  walletBalanceQueryOptions: vi.fn(),
 }));
 
 const mockFetchWalletBalance = fetchWalletBalance as Mock;
+const mockWalletBalanceQueryOptions = walletBalanceQueryOptions as Mock;
 
 describe("useWalletDataSuspense", () => {
   let queryClient: QueryClient;
@@ -38,11 +28,30 @@ describe("useWalletDataSuspense", () => {
         },
       },
     });
+
+    // Setup mock for walletBalanceQueryOptions
+    mockWalletBalanceQueryOptions.mockImplementation((address: string | null) => {
+      if (address) {
+        return {
+          queryKey: ["wallet", "balance", address],
+          queryFn: () => fetchWalletBalance(address),
+          enabled: true,
+          staleTime: 30 * 1000,
+          gcTime: 5 * 60 * 1000,
+        };
+      }
+      return {
+        queryKey: ["wallet", "balance", "null"],
+        queryFn: () => Promise.resolve("0"),
+        enabled: true,
+        staleTime: Number.POSITIVE_INFINITY,
+      };
+    });
   });
 
   const createMockUser = (walletAddress?: string): User => ({
     id: "test-user-id",
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(),
     linkedAccounts: [],
     mfaMethods: [],
     hasAcceptedTerms: true,
@@ -50,44 +59,71 @@ describe("useWalletDataSuspense", () => {
     wallet: walletAddress
       ? {
           address: walletAddress,
-          chainId: "eip155:11155111",
           chainType: "ethereum",
           connectorType: "injected",
-          walletClient: "metamask",
           walletClientType: "metamask",
           imported: false,
           delegated: false,
-          recovery: { rootEntropy: "test-entropy" },
+          walletIndex: 0,
         }
       : undefined,
   });
 
+  class ErrorBoundary extends Component<
+    { children: React.ReactNode },
+    { hasError: boolean; error?: Error }
+  > {
+    constructor(props: { children: React.ReactNode }) {
+      super(props);
+      this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error: Error) {
+      return { hasError: true, error };
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return <div>Error: {this.state.error?.message}</div>;
+      }
+      return this.props.children;
+    }
+  }
+
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 
   describe("without wallet", () => {
-    it("should return default values when user is null", () => {
+    it("should return default values when user is null", async () => {
       const { result } = renderHook(() => useWalletDataSuspense(null), {
         wrapper,
       });
 
-      expect(result.current.address).toBe(null);
-      expect(result.current.balance).toBe("0");
-      expect(result.current.hasWallet).toBe(false);
+      await waitFor(() => {
+        expect(result.current).toBeTruthy();
+        expect(result.current.address).toBe(null);
+        expect(result.current.balance).toBe("0");
+        expect(result.current.hasWallet).toBe(false);
+      });
     });
 
-    it("should return default values when user has no wallet", () => {
+    it("should return default values when user has no wallet", async () => {
       const user = createMockUser();
       const { result } = renderHook(() => useWalletDataSuspense(user), {
         wrapper,
       });
 
-      expect(result.current.address).toBe(null);
-      expect(result.current.balance).toBe("0");
-      expect(result.current.hasWallet).toBe(false);
+      await waitFor(() => {
+        expect(result.current).toBeTruthy();
+        expect(result.current.address).toBe(null);
+        expect(result.current.balance).toBe("0");
+        expect(result.current.hasWallet).toBe(false);
+      });
     });
   });
 
@@ -172,13 +208,16 @@ describe("useWalletDataSuspense", () => {
         ({ user }) => useWalletDataSuspense(user),
         {
           wrapper,
-          initialProps: { user: null },
+          initialProps: { user: null as User | null },
         },
       );
 
       // Initially null user
-      expect(result.current.address).toBe(null);
-      expect(result.current.hasWallet).toBe(false);
+      await waitFor(() => {
+        expect(result.current).toBeTruthy();
+        expect(result.current.address).toBe(null);
+        expect(result.current.hasWallet).toBe(false);
+      });
 
       // Update with user
       const user = createMockUser(walletAddress);
@@ -193,7 +232,7 @@ describe("useWalletDataSuspense", () => {
 
     it("should update when wallet address changes", async () => {
       const address1 = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
-      const address2 = "0x8ba1f109551bD432803012645Hac136c";
+      const address2 = "0x8ba1f109551bd432803012645eac136c12345678";
       const balance1 = "1.5";
       const balance2 = "3.0";
 
@@ -215,8 +254,11 @@ describe("useWalletDataSuspense", () => {
       });
 
       // Change address
-      rerender({ user: createMockUser(address2) });
+      await act(async () => {
+        rerender({ user: createMockUser(address2) });
+      });
 
+      // Wait for both address and balance to update
       await waitFor(() => {
         expect(result.current.address).toBe(address2);
         expect(result.current.balance).toBe(balance2);
@@ -248,9 +290,11 @@ describe("useWalletDataSuspense", () => {
       // Remove wallet
       rerender({ user: createMockUser() });
 
-      expect(result.current.address).toBe(null);
-      expect(result.current.balance).toBe("0");
-      expect(result.current.hasWallet).toBe(false);
+      await waitFor(() => {
+        expect(result.current.address).toBe(null);
+        expect(result.current.balance).toBe("0");
+        expect(result.current.hasWallet).toBe(false);
+      });
     });
   });
 
@@ -313,18 +357,21 @@ describe("useWalletDataSuspense", () => {
   });
 
   describe("return type consistency", () => {
-    it("should always return correct shape when no wallet", () => {
+    it("should always return correct shape when no wallet", async () => {
       const { result } = renderHook(() => useWalletDataSuspense(null), {
         wrapper,
       });
 
-      expect(result.current).toHaveProperty("address");
-      expect(result.current).toHaveProperty("balance");
-      expect(result.current).toHaveProperty("hasWallet");
+      await waitFor(() => {
+        expect(result.current).toBeTruthy();
+        expect(result.current).toHaveProperty("address");
+        expect(result.current).toHaveProperty("balance");
+        expect(result.current).toHaveProperty("hasWallet");
 
-      expect(typeof result.current.address).toBe("object"); // null
-      expect(typeof result.current.balance).toBe("string");
-      expect(typeof result.current.hasWallet).toBe("boolean");
+        expect(typeof result.current.address).toBe("object"); // null
+        expect(typeof result.current.balance).toBe("string");
+        expect(typeof result.current.hasWallet).toBe("boolean");
+      });
     });
 
     it("should always return correct shape when wallet exists", async () => {

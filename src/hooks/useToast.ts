@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export interface Toast {
   id: string;
@@ -53,7 +53,7 @@ export function useToast() {
     (props: Omit<Toast, "id">) => {
       return addToast(props);
     },
-    [addToast]
+    [addToast],
   );
 
   return {

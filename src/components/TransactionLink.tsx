@@ -1,8 +1,8 @@
 "use client";
 
+import { type EtherscanNetwork, getTransactionUrl } from "@/utils/etherscan";
 import { ExternalLink } from "lucide-react";
 import type { Hash } from "viem";
-import { getTransactionUrl, type EtherscanNetwork } from "@/utils/etherscan";
 
 interface TransactionLinkProps {
   hash: Hash;

@@ -1,14 +1,14 @@
 "use client";
 
-import React, { type ErrorInfo, type ReactNode } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   getTransactionErrorMessage,
   isTransactionError,
 } from "@/lib/blockchain/transactions";
+import { AlertTriangle, RefreshCw } from "lucide-react";
+import React, { type ErrorInfo, type ReactNode } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 interface Props {
   children: ReactNode;
@@ -23,7 +23,11 @@ interface ErrorFallbackProps {
   onReset?: () => void;
 }
 
-function ErrorFallback({ error, resetErrorBoundary, onReset }: ErrorFallbackProps) {
+function ErrorFallback({
+  error,
+  resetErrorBoundary,
+  onReset,
+}: ErrorFallbackProps) {
   const handleReset = () => {
     resetErrorBoundary();
     onReset?.();
@@ -91,8 +95,8 @@ function ErrorFallback({ error, resetErrorBoundary, onReset }: ErrorFallbackProp
           <div className="text-xs text-muted-foreground">
             {errorCode === "INSUFFICIENT_BALANCE" && (
               <p>
-                💡 Make sure you have enough balance for the transaction and
-                gas fees.
+                💡 Make sure you have enough balance for the transaction and gas
+                fees.
               </p>
             )}
             {errorCode === "INVALID_TO_ADDRESS" && (
@@ -102,14 +106,12 @@ function ErrorFallback({ error, resetErrorBoundary, onReset }: ErrorFallbackProp
               <p>💡 Check your internet connection and try again.</p>
             )}
             {errorCode === "USER_REJECTED" && (
-              <p>
-                💡 Transaction was cancelled. You can try again when ready.
-              </p>
+              <p>💡 Transaction was cancelled. You can try again when ready.</p>
             )}
             {errorCode === "GAS_ERROR" && (
               <p>
-                💡 Try reducing the transaction amount or wait for lower
-                network congestion.
+                💡 Try reducing the transaction amount or wait for lower network
+                congestion.
               </p>
             )}
           </div>
@@ -127,7 +129,11 @@ export default function TransactionErrorBoundary({
 }: Props) {
   const handleError = (error: Error, errorInfo: ErrorInfo) => {
     // Log error for debugging
-    console.error("TransactionErrorBoundary caught an error:", error, errorInfo);
+    console.error(
+      "TransactionErrorBoundary caught an error:",
+      error,
+      errorInfo,
+    );
 
     // Call optional error callback
     onError?.(error, errorInfo);

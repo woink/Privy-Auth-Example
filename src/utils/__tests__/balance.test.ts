@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"; // or jest
-import { truncateBalance } from "../balance.ts";
+import { truncateBalance } from "../balance";
 
 describe("truncateBalance", () => {
   describe("zero values", () => {

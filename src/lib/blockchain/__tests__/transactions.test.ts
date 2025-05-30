@@ -1,13 +1,13 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import { type Address, parseEther } from "viem";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  sendTransfer,
-  getTransaction,
-  waitForTransaction,
   TransactionError,
-  isTransactionError,
-  getTransactionErrorMessage,
   type TransferParams,
+  getTransaction,
+  getTransactionErrorMessage,
+  isTransactionError,
+  sendTransfer,
+  waitForTransaction,
 } from "../transactions";
 
 // Mock the privy client
@@ -55,17 +55,27 @@ describe("transactions", () => {
       });
 
       it("should throw error for invalid from address", async () => {
-        const params = { ...validTransferParams, from: mockAddresses.invalid as Address };
+        const params = {
+          ...validTransferParams,
+          from: mockAddresses.invalid as Address,
+        };
 
         await expect(sendTransfer(params)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(params)).rejects.toThrow("Invalid sender address");
+        await expect(sendTransfer(params)).rejects.toThrow(
+          "Invalid sender address",
+        );
       });
 
       it("should throw error for invalid to address", async () => {
-        const params = { ...validTransferParams, to: mockAddresses.invalid as Address };
+        const params = {
+          ...validTransferParams,
+          to: mockAddresses.invalid as Address,
+        };
 
         await expect(sendTransfer(params)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(params)).rejects.toThrow("Invalid recipient address");
+        await expect(sendTransfer(params)).rejects.toThrow(
+          "Invalid recipient address",
+        );
       });
 
       it("should throw error for invalid amount", async () => {
@@ -93,21 +103,35 @@ describe("transactions", () => {
         const params = { ...validTransferParams, to: mockAddresses.same };
 
         await expect(sendTransfer(params)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(params)).rejects.toThrow("Cannot send to the same address");
+        await expect(sendTransfer(params)).rejects.toThrow(
+          "Cannot send to the same address",
+        );
       });
 
       it("should throw error for missing sendTransaction function", async () => {
-        const params = { ...validTransferParams, sendTransaction: undefined as any };
+        const params = {
+          ...validTransferParams,
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          sendTransaction: undefined as any,
+        };
 
         await expect(sendTransfer(params)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(params)).rejects.toThrow("Send transaction function is required");
+        await expect(sendTransfer(params)).rejects.toThrow(
+          "Send transaction function is required",
+        );
       });
 
       it("should throw error for invalid sendTransaction function", async () => {
-        const params = { ...validTransferParams, sendTransaction: "not a function" as any };
+        const params = {
+          ...validTransferParams,
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+          sendTransaction: "not a function" as any,
+        };
 
         await expect(sendTransfer(params)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(params)).rejects.toThrow("Send transaction function is required");
+        await expect(sendTransfer(params)).rejects.toThrow(
+          "Send transaction function is required",
+        );
       });
     });
 
@@ -119,14 +143,18 @@ describe("transactions", () => {
       it("should throw error for insufficient balance", async () => {
         const balance = parseEther("0.5"); // Less than required amount
         mockClient.getBalance.mockResolvedValue(balance);
-        
+
         // Ensure sendTransaction is not called for this test
         mockSendTransaction.mockImplementation(() => {
           throw new Error("sendTransaction should not be called");
         });
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Insufficient balance");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Insufficient balance",
+        );
 
         expect(mockClient.getBalance).toHaveBeenCalledWith({
           address: mockAddresses.from,
@@ -138,8 +166,8 @@ describe("transactions", () => {
         const balance = parseEther("2.0"); // More than required amount
         const mockHash = "0x1234567890abcdef";
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
         mockSendTransaction.mockResolvedValue({ hash: mockHash });
 
         const result = await sendTransfer(validTransferParams);
@@ -160,8 +188,12 @@ describe("transactions", () => {
       it("should handle balance check errors", async () => {
         mockClient.getBalance.mockRejectedValue(new Error("Network error"));
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Failed to check balance");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Failed to check balance",
+        );
       });
     });
 
@@ -174,8 +206,8 @@ describe("transactions", () => {
       });
 
       it("should estimate gas successfully", async () => {
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
 
         const result = await sendTransfer(validTransferParams);
 
@@ -190,10 +222,16 @@ describe("transactions", () => {
       it("should handle gas estimation errors", async () => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockRejectedValue(new Error("Gas estimation failed"));
+        mockClient.estimateGas.mockRejectedValue(
+          new Error("Gas estimation failed"),
+        );
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Failed to estimate gas");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Failed to estimate gas",
+        );
       });
     });
 
@@ -201,8 +239,8 @@ describe("transactions", () => {
       beforeEach(() => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
         mockSendTransaction.mockClear();
       });
 
@@ -229,53 +267,73 @@ describe("transactions", () => {
       it("should handle transaction rejection by user", async () => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
-        mockSendTransaction.mockRejectedValue(new Error("User rejected transaction"));
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
+        mockSendTransaction.mockRejectedValue(
+          new Error("User rejected transaction"),
+        );
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Transaction was rejected by user");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Transaction was rejected by user",
+        );
       });
 
       it("should handle network errors during transaction", async () => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
         mockSendTransaction.mockRejectedValue(new Error("Network timeout"));
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Network error during transaction");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Network error during transaction",
+        );
       });
 
       it("should handle gas-related transaction errors", async () => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
         mockSendTransaction.mockRejectedValue(new Error("Gas limit exceeded"));
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Transaction failed due to gas issues");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Transaction failed due to gas issues",
+        );
       });
 
       it("should handle unknown transaction errors", async () => {
         const balance = parseEther("2.0");
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
-        mockSendTransaction.mockRejectedValue(new Error("Unknown blockchain error"));
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
+        mockSendTransaction.mockRejectedValue(
+          new Error("Unknown blockchain error"),
+        );
 
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow(TransactionError);
-        await expect(sendTransfer(validTransferParams)).rejects.toThrow("Transaction failed: Unknown blockchain error");
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          TransactionError,
+        );
+        await expect(sendTransfer(validTransferParams)).rejects.toThrow(
+          "Transaction failed: Unknown blockchain error",
+        );
       });
 
       it("should convert amount to wei correctly", async () => {
         const balance = parseEther("10.0"); // Sufficient balance for 2.5 ETH
         mockClient.getBalance.mockResolvedValue(balance);
-        mockClient.estimateGas.mockResolvedValue(21000n);
-        mockClient.getGasPrice.mockResolvedValue(20000000000n);
-        
+        mockClient.estimateGas.mockResolvedValue(BigInt(21000));
+        mockClient.getGasPrice.mockResolvedValue(BigInt(20000000000));
+
         const mockHash = "0xtest123";
         mockSendTransaction.mockResolvedValue({ hash: mockHash });
 
@@ -293,6 +351,7 @@ describe("transactions", () => {
   });
 
   describe("getTransaction", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const mockHash = "0xabc123def456" as any;
 
     it("should fetch transaction successfully", async () => {
@@ -303,33 +362,44 @@ describe("transactions", () => {
         value: parseEther("1.0"),
       };
 
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       mockClient.getTransaction.mockResolvedValueOnce(mockTransaction as any);
 
       const result = await getTransaction(mockHash);
 
       expect(result).toEqual(mockTransaction);
-      expect(mockClient.getTransaction).toHaveBeenCalledWith({ hash: mockHash });
+      expect(mockClient.getTransaction).toHaveBeenCalledWith({
+        hash: mockHash,
+      });
     });
 
     it("should handle fetch transaction errors", async () => {
-      mockClient.getTransaction.mockRejectedValue(new Error("Transaction not found"));
+      mockClient.getTransaction.mockRejectedValue(
+        new Error("Transaction not found"),
+      );
 
       await expect(getTransaction(mockHash)).rejects.toThrow(TransactionError);
-      await expect(getTransaction(mockHash)).rejects.toThrow("Failed to fetch transaction");
+      await expect(getTransaction(mockHash)).rejects.toThrow(
+        "Failed to fetch transaction",
+      );
     });
   });
 
   describe("waitForTransaction", () => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const mockHash = "0xabc123def456" as any;
 
     it("should wait for transaction confirmation successfully", async () => {
       const mockReceipt = {
         transactionHash: mockHash,
         status: "success",
-        blockNumber: 12345n,
+        blockNumber: BigInt(12345),
       };
 
-      mockClient.waitForTransactionReceipt.mockResolvedValueOnce(mockReceipt as any);
+      mockClient.waitForTransactionReceipt.mockResolvedValueOnce(
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        mockReceipt as any,
+      );
 
       const result = await waitForTransaction(mockHash);
 
@@ -341,10 +411,16 @@ describe("transactions", () => {
     });
 
     it("should handle confirmation timeout", async () => {
-      mockClient.waitForTransactionReceipt.mockRejectedValue(new Error("Timeout"));
+      mockClient.waitForTransactionReceipt.mockRejectedValue(
+        new Error("Timeout"),
+      );
 
-      await expect(waitForTransaction(mockHash)).rejects.toThrow(TransactionError);
-      await expect(waitForTransaction(mockHash)).rejects.toThrow("Transaction confirmation timeout or failed");
+      await expect(waitForTransaction(mockHash)).rejects.toThrow(
+        TransactionError,
+      );
+      await expect(waitForTransaction(mockHash)).rejects.toThrow(
+        "Transaction confirmation timeout or failed",
+      );
     });
   });
 
@@ -359,7 +435,11 @@ describe("transactions", () => {
 
     it("should include original error", () => {
       const originalError = new Error("Original");
-      const error = new TransactionError("Test message", "TEST_CODE", originalError);
+      const error = new TransactionError(
+        "Test message",
+        "TEST_CODE",
+        originalError,
+      );
 
       expect(error.originalError).toBe(originalError);
     });
@@ -387,20 +467,38 @@ describe("transactions", () => {
     it("should return user-friendly message for known error codes", () => {
       const testCases = [
         { code: "INVALID_FROM_ADDRESS", expected: "Invalid sender address" },
-        { code: "INVALID_TO_ADDRESS", expected: "Please enter a valid recipient address" },
-        { code: "INVALID_AMOUNT", expected: "Please enter a valid amount greater than 0" },
+        {
+          code: "INVALID_TO_ADDRESS",
+          expected: "Please enter a valid recipient address",
+        },
+        {
+          code: "INVALID_AMOUNT",
+          expected: "Please enter a valid amount greater than 0",
+        },
         { code: "SAME_ADDRESS", expected: "Cannot send funds to yourself" },
-        { code: "INSUFFICIENT_BALANCE", expected: "Insufficient balance for this transaction" },
+        {
+          code: "INSUFFICIENT_BALANCE",
+          expected: "Insufficient balance for this transaction",
+        },
         { code: "USER_REJECTED", expected: "Transaction was cancelled" },
-        { code: "NETWORK_ERROR", expected: "Network error. Please check your connection and try again" },
-        { code: "MISSING_SEND_FUNCTION", expected: "Wallet connection error. Please reconnect your wallet" },
-        { code: "NO_WALLET_CONNECTION", expected: "No connected wallet found. Please connect your wallet" },
+        {
+          code: "NETWORK_ERROR",
+          expected: "Network error. Please check your connection and try again",
+        },
+        {
+          code: "MISSING_SEND_FUNCTION",
+          expected: "Wallet connection error. Please reconnect your wallet",
+        },
+        {
+          code: "NO_WALLET_CONNECTION",
+          expected: "No connected wallet found. Please connect your wallet",
+        },
       ];
 
-      testCases.forEach(({ code, expected }) => {
+      for (const { code, expected } of testCases) {
         const error = new TransactionError("Original message", code);
         expect(getTransactionErrorMessage(error)).toBe(expected);
-      });
+      }
     });
 
     it("should return original message for unknown error codes", () => {
@@ -414,9 +512,15 @@ describe("transactions", () => {
     });
 
     it("should handle non-error objects", () => {
-      expect(getTransactionErrorMessage("string error")).toBe("An unexpected error occurred");
-      expect(getTransactionErrorMessage({})).toBe("An unexpected error occurred");
-      expect(getTransactionErrorMessage(null)).toBe("An unexpected error occurred");
+      expect(getTransactionErrorMessage("string error")).toBe(
+        "An unexpected error occurred",
+      );
+      expect(getTransactionErrorMessage({})).toBe(
+        "An unexpected error occurred",
+      );
+      expect(getTransactionErrorMessage(null)).toBe(
+        "An unexpected error occurred",
+      );
     });
   });
 });

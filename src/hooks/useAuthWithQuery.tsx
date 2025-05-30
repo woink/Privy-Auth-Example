@@ -1,10 +1,10 @@
 "use client";
 
-import { usePrivy, type User } from "@privy-io/react-auth";
+import { walletBalanceQueryOptions } from "@/lib/queries/wallet-queries";
+import { type User, usePrivy } from "@privy-io/react-auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { type Address, isAddress } from "viem";
-import { walletBalanceQueryOptions } from "@/lib/queries/wallet-queries";
 
 interface AuthState {
   isLoading: boolean;
@@ -29,9 +29,10 @@ export function useAuthWithQuery(): AuthState {
   // Extract wallet information
   const walletInfo = useMemo(() => {
     const rawAddress = user?.wallet?.address;
-    const address = rawAddress && isAddress(rawAddress) ? (rawAddress as Address) : null;
+    const address =
+      rawAddress && isAddress(rawAddress) ? (rawAddress as Address) : null;
     const hasWallet = !!address;
-    
+
     return { address, hasWallet };
   }, [user?.wallet?.address]);
 

@@ -1,23 +1,31 @@
-import { type UseMutationOptions, type UseQueryOptions } from "@tanstack/react-query";
-import { type Address, type Hash } from "viem";
 import {
-  type TransferParams,
-  type TransactionResult,
-  sendTransfer,
-  getTransaction,
-  waitForTransaction,
   TransactionError,
+  type TransactionResult,
+  type TransferParams,
+  getTransaction,
+  sendTransfer,
+  waitForTransaction,
 } from "@/lib/blockchain/transactions";
+import type {
+  UseMutationOptions,
+  UseQueryOptions,
+} from "@tanstack/react-query";
+import type { Address, Hash } from "viem";
 import { queryKeys } from "./query-keys";
 
 /**
  * Query options for getting a transaction by hash
  */
-export const transactionQueryOptions = (hash: Hash | null): UseQueryOptions<any, TransactionError> => ({
+export const transactionQueryOptions = (
+  hash: Hash | null,
+): UseQueryOptions<TransactionQueryData, TransactionError> => ({
   queryKey: hash ? queryKeys.transaction.detail(hash) : [],
   queryFn: () => {
     if (!hash) {
-      throw new TransactionError("No transaction hash provided", "MISSING_HASH");
+      throw new TransactionError(
+        "No transaction hash provided",
+        "MISSING_HASH",
+      );
     }
     return getTransaction(hash);
   },
@@ -35,19 +43,23 @@ export const transactionQueryOptions = (hash: Hash | null): UseQueryOptions<any,
     }
     return failureCount < 2;
   },
-  retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  retryDelay: (attemptIndex: number) =>
+    Math.min(1000 * 2 ** attemptIndex, 30000),
 });
 
 /**
  * Query options for waiting for transaction confirmation
  */
 export const transactionConfirmationQueryOptions = (
-  hash: Hash | null
-): UseQueryOptions<any, TransactionError> => ({
+  hash: Hash | null,
+): UseQueryOptions<TransactionConfirmationData, TransactionError> => ({
   queryKey: hash ? queryKeys.transaction.confirmation(hash) : [],
   queryFn: () => {
     if (!hash) {
-      throw new TransactionError("No transaction hash provided", "MISSING_HASH");
+      throw new TransactionError(
+        "No transaction hash provided",
+        "MISSING_HASH",
+      );
     }
     return waitForTransaction(hash);
   },
@@ -77,16 +89,18 @@ export const transferMutationOptions: UseMutationOptions<
   retry: (failureCount: number, error: unknown) => {
     if (error instanceof TransactionError) {
       // Don't retry validation errors
-      if ([
-        "INVALID_FROM_ADDRESS",
-        "INVALID_TO_ADDRESS", 
-        "INVALID_AMOUNT",
-        "SAME_ADDRESS",
-        "INSUFFICIENT_BALANCE",
-        "USER_REJECTED",
-        "MISSING_SEND_FUNCTION",
-        "NO_WALLET_CONNECTION",
-      ].includes(error.code)) {
+      if (
+        [
+          "INVALID_FROM_ADDRESS",
+          "INVALID_TO_ADDRESS",
+          "INVALID_AMOUNT",
+          "SAME_ADDRESS",
+          "INSUFFICIENT_BALANCE",
+          "USER_REJECTED",
+          "MISSING_SEND_FUNCTION",
+          "NO_WALLET_CONNECTION",
+        ].includes(error.code)
+      ) {
         return false;
       }
       // Retry network errors up to 2 times
@@ -96,14 +110,17 @@ export const transferMutationOptions: UseMutationOptions<
     }
     return false; // Don't retry by default for transactions
   },
-  retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  retryDelay: (attemptIndex: number) =>
+    Math.min(1000 * 2 ** attemptIndex, 10000),
 };
 
 /**
  * Helper types for transaction queries
  */
 export type TransactionQueryData = Awaited<ReturnType<typeof getTransaction>>;
-export type TransactionConfirmationData = Awaited<ReturnType<typeof waitForTransaction>>;
+export type TransactionConfirmationData = Awaited<
+  ReturnType<typeof waitForTransaction>
+>;
 
 /**
  * Helper function to invalidate transaction-related queries

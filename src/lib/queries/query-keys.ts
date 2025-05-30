@@ -46,8 +46,12 @@ export type WalletBalanceQueryKey = ReturnType<typeof queryKeys.wallet.balance>;
 export type WalletDetailQueryKey = ReturnType<typeof queryKeys.wallet.detail>;
 
 export type TransactionQueryKey = typeof queryKeys.transaction.all;
-export type TransactionDetailQueryKey = ReturnType<typeof queryKeys.transaction.detail>;
-export type TransactionConfirmationQueryKey = ReturnType<typeof queryKeys.transaction.confirmation>;
+export type TransactionDetailQueryKey = ReturnType<
+  typeof queryKeys.transaction.detail
+>;
+export type TransactionConfirmationQueryKey = ReturnType<
+  typeof queryKeys.transaction.confirmation
+>;
 
 /**
  * Helper to invalidate all wallet queries

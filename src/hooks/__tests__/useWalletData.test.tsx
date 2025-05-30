@@ -51,6 +51,7 @@ describe("useWalletData", () => {
           walletClientType: "metamask",
           imported: false,
           delegated: false,
+          walletIndex: 0,
         }
       : undefined,
   });
@@ -219,8 +220,8 @@ describe("useWalletData", () => {
       mockTruncateBalance.mockReturnValue("1");
 
       const { result, rerender } = renderHook(
-        ({ user }: { user: User | null }) => useWalletData(user),
-        { initialProps: { user: null } },
+        ({ user }) => useWalletData(user),
+        { initialProps: { user: null as User | null } },
       );
 
       // Initially null
@@ -293,7 +294,7 @@ describe("useWalletData", () => {
       const walletAddress = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
 
       // Create a promise that we can control
-      let resolveBalance: (value: bigint) => void;
+      let resolveBalance: (value: bigint) => void = () => {};
       const balancePromise = new Promise<bigint>((resolve) => {
         resolveBalance = resolve;
       });
@@ -308,7 +309,7 @@ describe("useWalletData", () => {
       expect(result.current.error).toBe(null);
 
       // Resolve the promise
-      resolveBalance!(BigInt("1000000000000000000"));
+      resolveBalance(BigInt("1000000000000000000"));
       mockFormatEther.mockReturnValue("1.0");
       mockTruncateBalance.mockReturnValue("1");
 

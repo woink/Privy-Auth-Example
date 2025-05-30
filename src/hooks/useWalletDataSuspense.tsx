@@ -11,10 +11,10 @@ export function useWalletBalance(address: Address | null) {
   const queryOptions = address
     ? walletBalanceQueryOptions(address)
     : {
-        queryKey: ["wallet", "balance", "null"],
+        queryKey: ["wallet", "balance", "null"] as const,
         queryFn: () => Promise.resolve("0"),
         enabled: true,
-        staleTime: Infinity, // Never refetch when no address
+        staleTime: Number.POSITIVE_INFINITY, // Never refetch when no address
       };
 
   const { data: balance } = useSuspenseQuery(queryOptions);
@@ -31,12 +31,13 @@ export function getWalletInfo(user: User | null) {
   }
 
   const rawAddress = user.wallet.address;
-  if (!rawAddress || typeof rawAddress !== 'string') {
+  if (!rawAddress || typeof rawAddress !== "string") {
     return { address: null, hasWallet: false };
   }
 
   // Use permissive validation for testing - check if it's a hex string with 0x prefix and 40 hex chars
-  const isValidAddress = /^0x[a-fA-F0-9]{40}$/.test(rawAddress) || isAddress(rawAddress);
+  const isValidAddress =
+    /^0x[a-fA-F0-9]{40}$/.test(rawAddress) || isAddress(rawAddress);
   const address = isValidAddress ? (rawAddress as Address) : null;
   const hasWallet = !!address;
 
@@ -49,10 +50,10 @@ export function getWalletInfo(user: User | null) {
  */
 export function useWalletDataSuspense(user: User | null) {
   const { address, hasWallet } = getWalletInfo(user);
-  
+
   // Always call the hook to avoid hook order violations
   const balance = useWalletBalance(address);
-  
+
   return {
     address,
     balance,

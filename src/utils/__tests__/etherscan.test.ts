@@ -1,16 +1,17 @@
+import type { Hash } from "viem";
 import { describe, expect, it } from "vitest";
 import {
-  getTransactionUrl,
+  type EtherscanNetwork,
+  extractHashFromUrl,
   getAddressUrl,
   getBlockUrl,
-  extractHashFromUrl,
+  getTransactionUrl,
   isEtherscanUrl,
-  type EtherscanNetwork,
 } from "../etherscan";
-import { type Hash } from "viem";
 
 describe("etherscan utilities", () => {
-  const mockTxHash = "0x0c88ac23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540" as Hash;
+  const mockTxHash =
+    "0x0c88ac23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540" as Hash;
   const mockAddress = "0x742d35Cc6634C0532925a3b8D6ad54EfC04cb2c2";
 
   describe("getTransactionUrl", () => {
@@ -164,13 +165,15 @@ describe("etherscan utilities", () => {
 
   describe("edge cases", () => {
     it("should handle hash with mixed case", () => {
-      const mixedCaseHash = "0x0C88AC23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540" as Hash;
+      const mixedCaseHash =
+        "0x0C88AC23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540" as Hash;
       const url = getTransactionUrl(mixedCaseHash);
       expect(url).toBe(`https://sepolia.etherscan.io/tx/${mixedCaseHash}`);
     });
 
     it("should extract hash with mixed case from URL", () => {
-      const mixedCaseHash = "0x0C88AC23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540";
+      const mixedCaseHash =
+        "0x0C88AC23d080c2037f0ede407b122f8ee4f1fd3f54f634b46b7f37c0041a3540";
       const url = `https://sepolia.etherscan.io/tx/${mixedCaseHash}`;
       const extractedHash = extractHashFromUrl(url);
       expect(extractedHash).toBe(mixedCaseHash);
@@ -179,7 +182,9 @@ describe("etherscan utilities", () => {
     it("should handle addresses with mixed case", () => {
       const mixedCaseAddress = "0x742D35Cc6634C0532925a3b8D6ad54EfC04Cb2c2";
       const url = getAddressUrl(mixedCaseAddress);
-      expect(url).toBe(`https://sepolia.etherscan.io/address/${mixedCaseAddress}`);
+      expect(url).toBe(
+        `https://sepolia.etherscan.io/address/${mixedCaseAddress}`,
+      );
     });
   });
 });

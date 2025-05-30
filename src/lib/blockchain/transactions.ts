@@ -1,5 +1,5 @@
 import { publicSepoliaClient } from "@/lib/privy";
-import { type Address, parseEther, type Hash } from "viem";
+import { type Address, type Hash, parseEther } from "viem";
 
 /**
  * Custom error class for transaction-related errors
@@ -50,7 +50,7 @@ const validateTransferParams = (params: TransferParams): void => {
     throw new TransactionError(
       "Invalid sender address",
       "INVALID_FROM_ADDRESS",
-      { from }
+      { from },
     );
   }
 
@@ -59,17 +59,17 @@ const validateTransferParams = (params: TransferParams): void => {
     throw new TransactionError(
       "Invalid recipient address",
       "INVALID_TO_ADDRESS",
-      { to }
+      { to },
     );
   }
 
   // Validate amount
   const amountNum = Number(amount);
-  if (isNaN(amountNum) || amountNum <= 0) {
+  if (Number.isNaN(amountNum) || amountNum <= 0) {
     throw new TransactionError(
       "Invalid amount: must be a positive number",
       "INVALID_AMOUNT",
-      { amount }
+      { amount },
     );
   }
 
@@ -78,7 +78,7 @@ const validateTransferParams = (params: TransferParams): void => {
     throw new TransactionError(
       "Cannot send to the same address",
       "SAME_ADDRESS",
-      { from, to }
+      { from, to },
     );
   }
 
@@ -86,7 +86,7 @@ const validateTransferParams = (params: TransferParams): void => {
   if (!sendTransaction || typeof sendTransaction !== "function") {
     throw new TransactionError(
       "Send transaction function is required",
-      "MISSING_SEND_FUNCTION"
+      "MISSING_SEND_FUNCTION",
     );
   }
 };
@@ -94,16 +94,19 @@ const validateTransferParams = (params: TransferParams): void => {
 /**
  * Check if sender has sufficient balance
  */
-const checkSufficientBalance = async (address: Address, amount: string): Promise<void> => {
+const checkSufficientBalance = async (
+  address: Address,
+  amount: string,
+): Promise<void> => {
   try {
     const balance = await publicSepoliaClient.getBalance({ address });
     const amountWei = parseEther(amount);
-    
+
     if (balance < amountWei) {
       throw new TransactionError(
         "Insufficient balance for transaction",
         "INSUFFICIENT_BALANCE",
-        { balance: balance.toString(), required: amountWei.toString() }
+        { balance: balance.toString(), required: amountWei.toString() },
       );
     }
   } catch (error) {
@@ -113,7 +116,7 @@ const checkSufficientBalance = async (address: Address, amount: string): Promise
     throw new TransactionError(
       "Failed to check balance",
       "BALANCE_CHECK_ERROR",
-      error
+      error,
     );
   }
 };
@@ -144,7 +147,7 @@ const estimateTransactionGas = async (params: TransferParams) => {
     throw new TransactionError(
       "Failed to estimate gas",
       "GAS_ESTIMATION_ERROR",
-      error
+      error,
     );
   }
 };
@@ -152,7 +155,9 @@ const estimateTransactionGas = async (params: TransferParams) => {
 /**
  * Send a transfer transaction
  */
-export const sendTransfer = async (params: TransferParams): Promise<TransactionResult> => {
+export const sendTransfer = async (
+  params: TransferParams,
+): Promise<TransactionResult> => {
   // Validate parameters
   validateTransferParams(params);
 
@@ -181,7 +186,6 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
       amount,
       timestamp: Date.now(),
     };
-
   } catch (error) {
     // Handle different types of errors
     if (error instanceof TransactionError) {
@@ -190,11 +194,14 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
 
     if (error instanceof Error) {
       // Network or RPC errors
-      if (error.message.includes("network") || error.message.includes("timeout")) {
+      if (
+        error.message.includes("network") ||
+        error.message.includes("timeout")
+      ) {
         throw new TransactionError(
           "Network error during transaction",
           "NETWORK_ERROR",
-          error
+          error,
         );
       }
 
@@ -203,16 +210,19 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
         throw new TransactionError(
           "Transaction failed due to gas issues",
           "GAS_ERROR",
-          error
+          error,
         );
       }
 
       // User rejection
-      if (error.message.includes("rejected") || error.message.includes("denied")) {
+      if (
+        error.message.includes("rejected") ||
+        error.message.includes("denied")
+      ) {
         throw new TransactionError(
           "Transaction was rejected by user",
           "USER_REJECTED",
-          error
+          error,
         );
       }
 
@@ -220,7 +230,7 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
       throw new TransactionError(
         `Transaction failed: ${error.message}`,
         "TRANSACTION_ERROR",
-        error
+        error,
       );
     }
 
@@ -228,7 +238,7 @@ export const sendTransfer = async (params: TransferParams): Promise<TransactionR
     throw new TransactionError(
       "Unknown error occurred during transaction",
       "UNKNOWN_ERROR",
-      error
+      error,
     );
   }
 };
@@ -244,7 +254,7 @@ export const getTransaction = async (hash: Hash) => {
     throw new TransactionError(
       "Failed to fetch transaction",
       "FETCH_TRANSACTION_ERROR",
-      error
+      error,
     );
   }
 };
@@ -254,7 +264,7 @@ export const getTransaction = async (hash: Hash) => {
  */
 export const waitForTransaction = async (hash: Hash) => {
   try {
-    const receipt = await publicSepoliaClient.waitForTransactionReceipt({ 
+    const receipt = await publicSepoliaClient.waitForTransactionReceipt({
       hash,
       timeout: 60000, // 60 seconds timeout
     });
@@ -263,7 +273,7 @@ export const waitForTransaction = async (hash: Hash) => {
     throw new TransactionError(
       "Transaction confirmation timeout or failed",
       "CONFIRMATION_ERROR",
-      error
+      error,
     );
   }
 };
@@ -271,7 +281,9 @@ export const waitForTransaction = async (hash: Hash) => {
 /**
  * Helper function to check if an error is a transaction error
  */
-export const isTransactionError = (error: unknown): error is TransactionError => {
+export const isTransactionError = (
+  error: unknown,
+): error is TransactionError => {
   return error instanceof TransactionError;
 };
 
