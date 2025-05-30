@@ -55,7 +55,7 @@ export default function PrivyProviderWrapper({
         appearance: {
           theme: "light",
           accentColor: "#676FFF",
-          showWalletLoginFirst: false,
+          showWalletLoginFirst: true,
         },
         loginMethods: ["wallet"],
         defaultChain: SEPOLIA_TESTNET,

@@ -15,12 +15,14 @@ export default function WalletAddress({
   if (!truncated) return <span>{address}</span>;
 
   const [ens, setEns] = useState<GetEnsNameReturnType>(null);
-  const ensName = async () => await publicMainnetClient.getEnsName({ address });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    const ensName = async () =>
+      await publicMainnetClient.getEnsName({ address });
     ensName().then(setEns);
   }, [address]);
 
-  return <span>{ens || `${address.slice(0, 6)}...${address.slice(-4)}`}</span>;
+  return (
+    <span className="font-mono">{ens || `${address.slice(0, 6)}...`}</span>
+  );
 }
