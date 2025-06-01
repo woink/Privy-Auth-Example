@@ -32,10 +32,6 @@ export default function Transfer() {
     isAuthenticated,
   } = useTransfer({
     onSuccess: (_data) => {
-      toast({
-        title: "Transaction Sent",
-        description: `Successfully sent ${sendAmount} ETH to ${recipient}. Check Etherscan for details.`,
-      });
       // Reset form on success
       setSendAmount("");
       setRecipient("");
