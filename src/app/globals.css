@@ -1,43 +1,6 @@
-@import url("tailwindcss");
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
-
-/* Custom font and body styles that don't have direct Tailwind equivalents */
-body {
-    font-family: "Muli", sans-serif;
-    font-weight: 300;
-}
-
-/* Custom component styles using @apply */
-.button-primary {
-    @apply bg-emerald-500 border-0 rounded-lg text-white text-base font-semibold px-6 py-4 text-center no-underline uppercase cursor-pointer mt-4;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-    @apply hover:bg-emerald-600 hover:disabled:bg-emerald-500;
-}
-
-.wallet-card {
-    @apply flex flex-col items-center justify-center bg-white rounded-xl p-8 m-5 w-fit shadow-md;
-}
-
-.wallet-balance {
-    @apply text-2xl font-semibold mt-5;
-}
-
-.transfer-card {
-    @apply flex flex-col items-center justify-center bg-white rounded-xl p-8 m-5 w-96 shadow-md;
-}
-
-.form-label {
-    @apply flex flex-col text-left font-semibold text-base my-4 w-full;
-}
-
-.form-input {
-    @apply p-3 text-base mt-1 border border-gray-300 rounded-md w-full;
-}
-
-.error-message {
-    @apply text-red-500 text-sm mt-3 font-medium text-center;
-}
 
 @theme inline {
     --font-sans: DM Sans, sans-serif;
@@ -105,27 +68,27 @@ body {
 }
 
 :root {
-    --background: oklch(1.0000 0 0);
+    --background: oklch(1 0 0);
     --foreground: oklch(0 0 0);
-    --card: oklch(1.0000 0 0);
+    --card: oklch(1 0 0);
     --card-foreground: oklch(0 0 0);
-    --popover: oklch(1.0000 0 0);
+    --popover: oklch(1 0 0);
     --popover-foreground: oklch(0 0 0);
     --primary: oklch(0.8032 0.1587 69.8092);
-    --primary-foreground: oklch(1.0000 0 0);
-    --secondary: oklch(0.8828 0.2735 138.1390);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.8828 0.2735 138.139);
     --secondary-foreground: oklch(0 0 0);
     --muted: oklch(0.9551 0 0);
     --muted-foreground: oklch(0.3211 0 0);
     --accent: oklch(0.4645 0.3049 269.8016);
-    --accent-foreground: oklch(1.0000 0 0);
+    --accent-foreground: oklch(1 0 0);
     --destructive: oklch(0 0 0);
-    --destructive-foreground: oklch(1.0000 0 0);
+    --destructive-foreground: oklch(1 0 0);
     --border: oklch(0 0 0);
     --input: oklch(0 0 0);
     --ring: oklch(0.8032 0.1587 69.8092);
     --chart-1: oklch(0.8032 0.1587 69.8092);
-    --chart-2: oklch(0.8828 0.2735 138.1390);
+    --chart-2: oklch(0.8828 0.2735 138.139);
     --chart-3: oklch(0.4645 0.3049 269.8016);
     --chart-4: oklch(0.7426 0.1824 155.3241);
     --chart-5: oklch(0.5411 0.2166 8.6331);
@@ -133,9 +96,9 @@ body {
     --sidebar: oklch(0.9551 0 0);
     --sidebar-foreground: oklch(0 0 0);
     --sidebar-primary: oklch(0.8032 0.1587 69.8092);
-    --sidebar-primary-foreground: oklch(1.0000 0 0);
+    --sidebar-primary-foreground: oklch(1 0 0);
     --sidebar-accent: oklch(0.4645 0.3049 269.8016);
-    --sidebar-accent-foreground: oklch(1.0000 0 0);
+    --sidebar-accent-foreground: oklch(1 0 0);
     --sidebar-border: oklch(0 0 0);
     --sidebar-ring: oklch(0.8032 0.1587 69.8092);
     --font-sans: DM Sans, sans-serif;
@@ -149,24 +112,34 @@ body {
     --shadow-offset-y: 4px;
     --letter-spacing: 0em;
     --spacing: 0.25rem;
-    --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.50);
-    --shadow-xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.50);
-    --shadow-sm: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 1px 2px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 1px 2px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-md: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 2px 4px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-lg: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 4px 6px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 8px 10px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 2.50);
+    --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.5);
+    --shadow-xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.5);
+    --shadow-sm:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 1px 2px -1px hsl(0 0% 10.1961% / 1);
+    --shadow:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 1px 2px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-md:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 2px 4px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-lg:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 4px 6px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-xl:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 8px 10px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 2.5);
     --tracking-normal: 0em;
 }
 
 .dark {
     --background: oklch(0 0 0);
-    --foreground: oklch(1.0000 0 0);
+    --foreground: oklch(1 0 0);
     --card: oklch(0.3211 0 0);
-    --card-foreground: oklch(1.0000 0 0);
+    --card-foreground: oklch(1 0 0);
     --popover: oklch(0.3211 0 0);
-    --popover-foreground: oklch(1.0000 0 0);
+    --popover-foreground: oklch(1 0 0);
     --primary: oklch(0.8461 0.1289 73.5431);
     --primary-foreground: oklch(0 0 0);
     --secondary: oklch(0.8952 0.2496 135.9394);
@@ -175,10 +148,10 @@ body {
     --muted-foreground: oklch(0.8452 0 0);
     --accent: oklch(0.5061 0.2788 273.6814);
     --accent-foreground: oklch(0 0 0);
-    --destructive: oklch(1.0000 0 0);
+    --destructive: oklch(1 0 0);
     --destructive-foreground: oklch(0 0 0);
-    --border: oklch(1.0000 0 0);
-    --input: oklch(1.0000 0 0);
+    --border: oklch(1 0 0);
+    --input: oklch(1 0 0);
     --ring: oklch(0.8461 0.1289 73.5431);
     --chart-1: oklch(0.8461 0.1289 73.5431);
     --chart-2: oklch(0.8952 0.2496 135.9394);
@@ -187,12 +160,12 @@ body {
     --chart-5: oklch(0.5734 0.1945 0.2938);
     --radius: 0px;
     --sidebar: oklch(0 0 0);
-    --sidebar-foreground: oklch(1.0000 0 0);
+    --sidebar-foreground: oklch(1 0 0);
     --sidebar-primary: oklch(0.8461 0.1289 73.5431);
     --sidebar-primary-foreground: oklch(0 0 0);
     --sidebar-accent: oklch(0.5061 0.2788 273.6814);
     --sidebar-accent-foreground: oklch(0 0 0);
-    --sidebar-border: oklch(1.0000 0 0);
+    --sidebar-border: oklch(1 0 0);
     --sidebar-ring: oklch(0.8461 0.1289 73.5431);
     --font-sans: DM Sans, sans-serif;
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -205,22 +178,32 @@ body {
     --shadow-offset-y: 4px;
     --letter-spacing: 0em;
     --spacing: 0.25rem;
-    --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.50);
-    --shadow-xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.50);
-    --shadow-sm: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 1px 2px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 1px 2px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-md: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 2px 4px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-lg: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 4px 6px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 1.00), 4px 8px 10px -1px hsl(0 0% 10.1961% / 1.00);
-    --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 2.50);
+    --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.5);
+    --shadow-xs: 4px 4px 0px 0px hsl(0 0% 10.1961% / 0.5);
+    --shadow-sm:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 1px 2px -1px hsl(0 0% 10.1961% / 1);
+    --shadow:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 1px 2px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-md:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 2px 4px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-lg:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 4px 6px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-xl:
+        4px 4px 0px 0px hsl(0 0% 10.1961% / 1),
+        4px 8px 10px -1px hsl(0 0% 10.1961% / 1);
+    --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 10.1961% / 2.5);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
-    letter-spacing: var(--tracking-normal);
+    body {
+        @apply bg-background text-foreground;
+        letter-spacing: var(--tracking-normal);
     }
 }

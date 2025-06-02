@@ -1,4 +1,4 @@
-import "./globals.scss";
+import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Toast from "@/components/Toast";
 import { ToastProvider } from "@/contexts/ToastContext";
